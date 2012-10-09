@@ -3,7 +3,7 @@ module Telecine
   class Node
     include Celluloid
     include Celluloid::FSM
-    attr_reader :id, :addr, :timestamp
+    attr_reader :id, :addr
 
     # FSM
     default_state :disconnected
@@ -21,15 +21,12 @@ module Telecine
       include Enumerable
       extend Forwardable
 
-      def_delegators "Celluloid::Actor[:node_manager]", :all, :each, :find, :[], :handle_gossip
-      def_delegators "Celluloid::Actor[:node_manager]", :gossip_rate, :heartbeat_timeout
+      def_delegators "Celluloid::Actor[:node_manager]", :all, :each, :find, :[]
     end
 
     def initialize(id, addr)
       @id, @addr = id, addr
-      @timestamp = 0
       @socket = nil
-      @fresh = true
 
       # Total hax to accommodate the new Celluloid::FSM API
       attach self
@@ -37,7 +34,6 @@ module Telecine
 
     def finalize
       transition :shutdown
-      @gossip.cancel if @gossip
       @socket.close if @socket
     end
 
@@ -97,27 +93,6 @@ module Telecine
       socket << message
     end
     alias_method :<<, :send_message
-
-    def tick
-      @timestamp += 1
-    end
-
-    def fresh?
-      @fresh
-    end
-
-    # Handle an incoming timestamp observation for this node
-    def handle_timestamp(t)
-      @fresh = false if t > 0
-      if @timestamp < t
-        @timestamp = t
-        transition :connected
-        transition :partitioned, :delay => self.class.heartbeat_timeout
-        unless state == :connected
-          Celluloid::Logger.info "Revived node #{id}"
-        end
-      end
-    end
 
     # Friendlier inspection
     def inspect

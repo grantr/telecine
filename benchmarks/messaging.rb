@@ -6,9 +6,9 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup
 
-require 'dcell'
-DCell.setup
-DCell.run!
+require 'telecine'
+Telecine.setup
+Telecine.run!
 
 RECEIVER_PORT = 2043
 
@@ -52,13 +52,13 @@ class AsyncPerformanceTest
   end
 end
 
-DCell.start :id => "messaging_node", :addr => "tcp://127.0.0.1:2042",
+Telecine.start :id => "messaging_node", :addr => "tcp://127.0.0.1:2042",
   :directory => {
     :id => "benchmark_receiver",
     :addr => "tcp://127.0.0.1:#{RECEIVER_PORT}"
   }
 
-receiver = DCell::Node['benchmark_receiver']
+receiver = Telecine::Node['benchmark_receiver']
 progenator = receiver[:progenator]
 
 test = AsyncPerformanceTest.new progenator

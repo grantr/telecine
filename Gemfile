@@ -7,5 +7,5 @@ gem 'reel',          :git => 'git://github.com/celluloid/reel'
 
 gem 'jruby-openssl', :platform => :jruby
 
-# Specify your gem's dependencies in dcell.gemspec
+# Specify your gem's dependencies in telecine.gemspec
 gemspec

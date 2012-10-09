@@ -1,4 +1,4 @@
-shared_context "a DCell registry" do
+shared_context "a Telecine registry" do
   context "global registry" do
     before :each do
       subject.clear_globals

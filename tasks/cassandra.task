@@ -65,15 +65,15 @@ namespace :cassandra do
   task :start => :cassandra do
     puts "*** Starting Cassandra"
 
-    # adding the -Dcassandra.for=dcell makes it easier to kill the right
-    # cassandra if you're running more than one, e.g. pkill -f dcell
+    # adding the -Dcassandra.for=telecine makes it easier to kill the right
+    # cassandra if you're running more than one, e.g. pkill -f telecine
     # or DTRT and kill $(< cassandra/cassandra.pid)
-    sh "cd cassandra && bin/cassandra -p cassandra.pid -Dcassandra.for=dcell"
+    sh "cd cassandra && bin/cassandra -p cassandra.pid -Dcassandra.for=telecine"
     puts "*** waiting for Cassandra to come up before creating schema ..."
     sleep 2
     puts "*** creating schema ..."
-    sh "echo 'create keyspace dcell;' | cassandra/bin/cassandra-cli -h 127.0.0.1 -p 29160"
-    sh "echo 'create column family dcell;' | cassandra/bin/cassandra-cli -h 127.0.0.1 -p 29160 -k dcell"
+    sh "echo 'create keyspace telecine;' | cassandra/bin/cassandra-cli -h 127.0.0.1 -p 29160"
+    sh "echo 'create column family telecine;' | cassandra/bin/cassandra-cli -h 127.0.0.1 -p 29160 -k telecine"
   end
 end
 

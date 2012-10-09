@@ -1,4 +1,8 @@
-HEAD
+0.1.0
+---
+* Remove node discovery and rename to Telecine
+
+0.11.0
 ----
 * Switch default port to 7890 (7777 is heavily used by other programs)
 

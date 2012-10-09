@@ -2,8 +2,8 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup
 
-require 'dcell'
-DCell.start :id => 'benchmark_receiver', :addr => 'tcp://127.0.0.1:2043'
+require 'telecine'
+Telecine.start :id => 'benchmark_receiver', :addr => 'tcp://127.0.0.1:2043'
 
 class AsyncReceiver
   include Celluloid
@@ -30,7 +30,7 @@ class Progenator
 end
 
 class BenchmarkApplication < Celluloid::SupervisionGroup
-  supervise DCell::SupervisionGroup
+  supervise Telecine::SupervisionGroup
   supervise Progenator, :as => :progenator
 end
 

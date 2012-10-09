@@ -17,15 +17,8 @@ require 'telecine/future_proxy'
 require 'telecine/server'
 require 'telecine/info_service'
 
-require 'telecine/registries/redis_adapter'
-require 'telecine/registries/moneta_adapter'
-
-require 'telecine/registries/gossip/core'
-require 'telecine/registries/gossip_adapter'
-
 require 'telecine/celluloid_ext'
 
-# Distributed Celluloid
 module Telecine
   class NotConfiguredError < RuntimeError; end # Not configured yet
 
@@ -33,7 +26,7 @@ module Telecine
   @config_lock  = Mutex.new
 
   class << self
-    attr_reader :me, :registry
+    attr_reader :me
 
     # Configure Telecine with the following options:
     #
@@ -47,8 +40,7 @@ module Telecine
       @config_lock.synchronize do
         @configuration = {
           'id'   => generate_node_id,
-          'addr' => "tcp://127.0.0.1:#{DEFAULT_PORT}",
-          'registry' => {'adapter' => 'redis', 'server' => 'localhost'}
+          'addr' => "tcp://127.0.0.1:#{DEFAULT_PORT}"
         }.merge(options)
 
         @me = Node.new @configuration['id'], @configuration['addr']
@@ -62,19 +54,6 @@ module Telecine
           'addr' => @configuration['addr']
         }.merge(directory)
         Telecine::Directory.set directory['id'], directory['addr']
-
-        registry_adapter = @configuration['registry'][:adapter] || @configuration['registry']['adapter']
-        raise ArgumentError, "no registry adapter given in config" unless registry_adapter
-
-        registry_class_name = registry_adapter.split("_").map(&:capitalize).join << "Adapter"
-
-        begin
-          registry_class = Telecine::Registry.const_get registry_class_name
-        rescue NameError
-          raise ArgumentError, "invalid registry adapter: #{@configuration['registry']['adapter']}"
-        end
-
-        @registry = registry_class.new(@configuration['registry'])
 
         addr = @configuration['public'] || @configuration['addr']
         Telecine::Directory.set @configuration['id'], addr

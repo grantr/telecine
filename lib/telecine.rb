@@ -3,6 +3,8 @@ require 'celluloid/zmq'
 
 Celluloid::ZMQ.init
 
+require 'red25519'
+
 require 'telecine/version'
 require 'telecine/actor_proxy'
 require 'telecine/directory'
@@ -74,7 +76,7 @@ module Telecine
 
     # Attempt to generate a unique node ID for this machine
     def generate_node_id
-      `hostname`.strip # Super creative I know
+      Ed25519::SigningKey.generate.to_hex
     end
 
     # Run the Telecine application

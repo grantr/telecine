@@ -8,7 +8,6 @@ require 'telecine/configuration'
 require 'telecine/configuration/local_node'
 require 'telecine/remote_notifications'
 
-require 'telecine/node'
 require 'telecine/node_registry'
 require 'telecine/router'
 

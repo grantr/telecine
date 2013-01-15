@@ -1,7 +1,7 @@
 require 'telecine/failure_detector'
 
 module Telecine
-  class Node
+  class RemoteNode
     include Celluloid
     include Celluloid::FSM
     include Celluloid::Notifications

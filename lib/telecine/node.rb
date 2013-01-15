@@ -55,7 +55,7 @@ module Telecine
     # overridden because inspect causes stack overflow
     # TODO why?
     def inspect
-      "Node"
+      "Node id:#{@id} address:#{@address}"
     end
   end
 end

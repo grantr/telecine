@@ -1,4 +1,4 @@
-module Zensu
+module Telecine
   class Message
     VERSION = "1"
 

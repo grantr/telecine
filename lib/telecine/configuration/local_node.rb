@@ -1,5 +1,5 @@
 require 'red25519'
-module Zensu
+module Telecine
   class Configuration
     class LocalNode < Configuration
 

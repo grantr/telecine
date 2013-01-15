@@ -1,4 +1,4 @@
-module Zensu
+module Telecine
   class Registry < Hash
     attr_accessor :_id
 
@@ -52,9 +52,9 @@ module Zensu
     end
 
     def _topic
-      "zensu.registry.#{@_id}"
+      "telecine.registry.#{@_id}"
     end
   end
 end
 
-require 'zensu/registry/callbacks'
+require 'telecine/registry/callbacks'

@@ -1,15 +1,15 @@
-# Zensu
+# Telecine
 
-[![Build Status](https://secure.travis-ci.org/grantr/zensu.png?branch=master)](http://travis-ci.org/grantr/zensu)
-[![Dependency Status](https://gemnasium.com/grantr/zensu.png)](https://gemnasium.com/grantr/zensu)
+[![Build Status](https://secure.travis-ci.org/grantr/telecine.png?branch=master)](http://travis-ci.org/grantr/telecine)
+[![Dependency Status](https://gemnasium.com/grantr/telecine.png)](https://gemnasium.com/grantr/telecine)
 
-Zensu is a work-in-progress on a sensu-like monitoring system using zeromq as a transport instead of rabbitmq.
+Telecine is a work-in-progress on a RPC framework built on Celluloid.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'zensu'
+    gem 'telecine'
 
 And then execute:
 
@@ -17,7 +17,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install zensu
+    $ gem install telecine
 
 ## Usage
 

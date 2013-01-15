@@ -1,4 +1,4 @@
-module Zensu
+module Telecine
   class FailureDetector
 
     attr_reader :last_time, :intervals

@@ -1,4 +1,4 @@
-module Zensu
+module Telecine
   class Configuration < Registry
     def method_missing(name, *args)
       if name.to_s =~ /(.*)=$/
@@ -37,4 +37,4 @@ module Zensu
   end
 end
 
-require 'zensu/configuration/configurable'
+require 'telecine/configuration/configurable'

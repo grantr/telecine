@@ -7,7 +7,7 @@ if ENV['COVERAGE'] == 'true' && RUBY_ENGINE == "ruby"
   end
 end
 
-require 'zensu'
+require 'telecine'
 
 Dir['./spec/support/*.rb'].map {|f| require f }
 

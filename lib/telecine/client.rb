@@ -1,6 +1,6 @@
-require 'zensu/stethoscope'
+require 'telecine/stethoscope'
 
-module Zensu
+module Telecine
 
   module Client
     class App < Celluloid::SupervisionGroup

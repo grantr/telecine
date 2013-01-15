@@ -1,4 +1,4 @@
-module Zensu
+module Telecine
   module Configurable
 
     def self.included(base)
@@ -25,7 +25,7 @@ module Zensu
 
       #TODO there should also be a way to slave a local config accessor to some other config, eg
       # class SomeClass
-      #   use_config :master_server, from: Zensu.config
+      #   use_config :master_server, from: Telecine.config
       #
       #   def foo
       #     puts master_server

@@ -1,11 +1,11 @@
-require 'zensu'
-Zensu::Server::App.run!
-Zensu::Client::App.run!
+require 'telecine'
+Telecine::Server::App.run!
+Telecine::Client::App.run!
 
 require './examples/config'
-# Zensu.config.broadcast_endpoint = "tcp://127.0.0.1:58000"
+# Telecine.config.broadcast_endpoint = "tcp://127.0.0.1:58000"
 # 
-# Zensu.config.servers = ["tcp://127.0.0.1:58000"]
+# Telecine.config.servers = ["tcp://127.0.0.1:58000"]
 
 require File.expand_path('../broadcaster', __FILE__)
 require File.expand_path('../subscriber', __FILE__)

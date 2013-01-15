@@ -1,9 +1,9 @@
 class Subscriber
   include Celluloid
-  include Zensu::RemoteNotifications
+  include Telecine::RemoteNotifications
 
   def initialize
-    remote_subscribe(/^zensu.broadcast/, :dispatch)
+    remote_subscribe(/^telecine.broadcast/, :dispatch)
   end
 
   def dispatch(topic, message)

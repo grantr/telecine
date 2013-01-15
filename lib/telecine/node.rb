@@ -1,6 +1,6 @@
-require 'zensu/failure_detector'
+require 'telecine/failure_detector'
 
-module Zensu
+module Telecine
   class Node
     include Celluloid
     include Celluloid::FSM
@@ -49,7 +49,7 @@ module Zensu
 
     def notify_state(state)
       Logger.info "#{@id} #{state}"
-      publish("zensu.node.state.#{@id}", state)
+      publish("telecine.node.state.#{@id}", state)
     end
 
     # overridden because inspect causes stack overflow

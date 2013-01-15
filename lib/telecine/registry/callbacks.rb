@@ -1,4 +1,4 @@
-module Zensu
+module Telecine
   class Registry
     # on_update registry, :servers do |action, previous, current|
     # end

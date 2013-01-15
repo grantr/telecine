@@ -1,26 +1,26 @@
 require 'celluloid/zmq/pubsub_notifier'
 
-module Zensu
+module Telecine
   module RemoteNotifications
     def self.notifier
       Celluloid::Actor[:remote_notifier]
     end
 
     def remote_notifier
-      Zensu::RemoteNotifications.notifier
+      Telecine::RemoteNotifications.notifier
     end
 
     def remote_publish(pattern, *args)
-      Zensu::RemoteNotifications.notifier.publish(pattern, *args)
+      Telecine::RemoteNotifications.notifier.publish(pattern, *args)
     end
 
     def remote_subscribe(pattern, method)
       link remote_notifier
-      Zensu::RemoteNotifications.notifier.subscribe(Celluloid::Actor.current, pattern, method)
+      Telecine::RemoteNotifications.notifier.subscribe(Celluloid::Actor.current, pattern, method)
     end
 
     def remote_unsubscribe(*args)
-      Zensu::RemoteNotifications.notifier.unsubscribe(*args)
+      Telecine::RemoteNotifications.notifier.unsubscribe(*args)
     end
   end
 
@@ -30,7 +30,7 @@ module Zensu
     def initialize
       super()
 
-      on_update Zensu.config, :broadcast_servers do |action, previous, current|
+      on_update Telecine.config, :broadcast_servers do |action, previous, current|
         case action
         when :set
           clear_peers
@@ -44,11 +44,11 @@ module Zensu
         end
       end
 
-      on_set Zensu.config, :broadcast_endpoint do |previous, current|
+      on_set Telecine.config, :broadcast_endpoint do |previous, current|
         add_endpoint(current)
       end
 
-      on_remove Zensu.config, :broadcast_endpoint do |previous, current|
+      on_remove Telecine.config, :broadcast_endpoint do |previous, current|
         remove_endpoint(previous)
       end
     end

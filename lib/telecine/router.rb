@@ -1,14 +1,14 @@
 require 'celluloid/zmq/router'
-require 'zensu/message'
+require 'telecine/message'
 
-module Zensu
+module Telecine
   class Router < Celluloid::ZMQ::Router
     include Registry::Callbacks
 
     def initialize(*args)
       super
 
-      on_set Zensu.node, :id do |previous, current|
+      on_set Telecine.node, :id do |previous, current|
         @identity = current
         # if there are already bound endpoints, they must be rebound
         # to get the new identity
@@ -19,15 +19,15 @@ module Zensu
         end
       end
 
-      on_set Zensu.config, :router_endpoint do |previous, current|
+      on_set Telecine.config, :router_endpoint do |previous, current|
         add_endpoint(current)
       end
 
-      on_remove Zensu.config, :router_endpoint do |previous, current|
+      on_remove Telecine.config, :router_endpoint do |previous, current|
         remove_endpoint(previous)
       end
 
-      on_update Zensu.nodes do |key, action, previous, current|
+      on_update Telecine.nodes do |key, action, previous, current|
         case action
         when :set
           Logger.debug "adding peer: #{key} #{current}"

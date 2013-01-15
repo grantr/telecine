@@ -1,6 +1,6 @@
-require 'zensu/heart'
+require 'telecine/heart'
 
-module Zensu
+module Telecine
   module Server
     class App < Celluloid::SupervisionGroup
       supervise Heart, as: :heart

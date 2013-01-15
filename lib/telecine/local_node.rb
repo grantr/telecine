@@ -3,7 +3,9 @@ module Telecine
     include Celluloid
 
     def call(destination, method, *args)
-      # cast then wait for a reply
+      if mailbox = find_mailbox(destination)
+        Actor.call(mailbox, method, *args)
+      end
     end
 
     def cast(destination, method, *args)
@@ -15,6 +17,7 @@ module Telecine
     def find_mailbox(destination)
       actor = Actor[destination]
       actor && actor.alive? ? actor.mailbox : nil
+      #TODO return a mailbox if asked
     end
 
   end

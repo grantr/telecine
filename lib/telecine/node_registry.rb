@@ -11,5 +11,9 @@ module Telecine
         end
       end
     end
+
+    def local
+      get(Telecine.node.id)
+    end
   end
 end

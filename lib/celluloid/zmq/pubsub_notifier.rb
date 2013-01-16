@@ -21,9 +21,11 @@ module Celluloid
 
       def init_pub_socket
         @pub.close if @pub
+        @pub_monitor.terminate if @pub_monitor
 
         @pub = PubSocket.new
-        SocketMonitor.new_link(@pub, "zmq.socket.#{Celluloid::UUID.generate}")
+        @pub_monitor = SocketMonitor.new_link(@pub, "zmq.socket.#{Celluloid::UUID.generate}")
+        @pub
       end
 
       def add_endpoint(endpoint)
@@ -57,9 +59,10 @@ module Celluloid
 
       def init_sub_socket
         @sub.close if @sub
+        @sub_monitor.terminate if @sub_monitor
 
         @sub = SubSocket.new
-        SocketMonitor.new_link(@sub, "zmq.socket.#{Celluloid::UUID.generate}")
+        @sub_monitor = SocketMonitor.new_link(@sub, "zmq.socket.#{Celluloid::UUID.generate}")
         @sub.subscribe("")
 
         #TODO add peers? could end up looping

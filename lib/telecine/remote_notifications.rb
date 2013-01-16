@@ -11,7 +11,7 @@ module Telecine
     end
 
     def remote_publish(pattern, *args)
-      Telecine::RemoteNotifications.notifier.publish(pattern, *args)
+      Telecine::RemoteNotifications.notifier.async.publish(pattern, *args)
     end
 
     def remote_subscribe(pattern, method)

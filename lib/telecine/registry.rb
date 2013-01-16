@@ -17,7 +17,7 @@ module Telecine
     def set(key, value)
       raise "Cannot store value with nil key" if key.nil?
       @_lock.synchronize do
-        publish_update(key, fetch(key.to_sym, nil), value)
+        publish_update(key.to_sym, fetch(key.to_sym, nil), value)
         store(key.to_sym, value)
       end
     end
@@ -25,8 +25,8 @@ module Telecine
     def remove(key)
       raise "Cannot remove nil key" if key.nil?
       @_lock.synchronize do
-        if deleted = delete(key)
-          Celluloid::Notifications.notifier.async.publish("#{_topic}.#{key}.remove", @_id, key, :remove, deleted, nil)
+        if deleted = delete(key.to_sym)
+          Celluloid::Notifications.notifier.async.publish("#{_topic}.#{key.to_sym}.remove", @_id, key.to_sym, :remove, deleted, nil)
         end
       end
     end

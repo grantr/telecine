@@ -20,9 +20,11 @@ module Celluloid
 
       def init_router_socket
         @socket.close if @socket
+        @monitor.terminate if @monitor
 
         @socket = RouterSocket.new
-        SocketMonitor.new_link(@socket, "zmq.socket.#{Celluloid::UUID.generate}")
+        @monitor = SocketMonitor.new_link(@socket, "zmq.socket.#{Celluloid::UUID.generate}")
+        @socket
       end
 
       def add_endpoint(endpoint)

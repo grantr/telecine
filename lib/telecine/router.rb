@@ -67,14 +67,14 @@ module Telecine
 
       case message.headers.first
       when "call"
-        result = Telecine.nodes.local.call(*message.parts)
+        result = dispatch_call(*message.parts)
         reply = Message.new
         reply.id = message.id
         reply.headers = ["reply"]
         reply.parts = result
         write(identity, *reply.to_parts)
       when "cast"
-        Telecine.nodes.local.cast(*message.parts)
+        dispatch_cast(*message.parts)
       when "reply"
         if @requests && @requests[message.id]
           #TODO use reply-ids
@@ -82,5 +82,27 @@ module Telecine
         end
       end
     end
+
+    module LocalDispatch
+
+      def dispatch_call(destination, method, *args)
+        if mailbox = find_mailbox(destination)
+          Celluloid::Actor.call(mailbox, method, *args)
+        end
+      end
+
+      def dispatch_cast(destination, method, *args)
+        if mailbox = find_mailbox(destination)
+          Celluloid::Actor.async(mailbox, method, *args)
+        end
+      end
+
+      def find_mailbox(destination)
+        actor = Celluloid::Actor[destination.to_sym]
+        actor && actor.alive? ? actor.mailbox : nil
+        #TODO return a mailbox if asked
+      end
+    end
+    include LocalDispatch
   end
 end

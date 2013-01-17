@@ -8,7 +8,6 @@ require 'telecine/configuration'
 require 'telecine/configuration/local_node'
 require 'telecine/remote_notifications'
 
-require 'telecine/node_registry'
 require 'telecine/router'
 
 module Telecine
@@ -20,7 +19,7 @@ module Telecine
     end
 
     def nodes
-      @nodes ||= NodeRegistry.new
+      @nodes ||= Registry.new
     end
   end
 

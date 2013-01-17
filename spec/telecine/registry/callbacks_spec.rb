@@ -1,10 +1,135 @@
 require 'spec_helper'
 
 describe Telecine::Registry::Callbacks do
-    
-  # on_update
-  # on_*
-  # callbacks
+  let(:registry) { Telecine::Registry.new }
+  let(:callback_listener) { CallbackListener.new }
+  let(:block) { ->(*args) { callback_listener.callback_args = args } }
+
+  it 'should run on_update callback with no key or action' do
+    callback_listener.on_update registry, &block
+    registry.set(:foo, :bar)
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [:foo, :set, nil, :bar]
+  end
+
+  it 'should run on_update callback with a key' do
+    callback_listener.on_update registry, :foo, &block
+    registry.set(:foo, :bar)
+    registry.set(:foo2, :bar2)
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [:set, nil, :bar]
+  end
+
+  it 'should run on_update callback with an action' do
+    pending "doesn't work yet"
+    callback_listener.on_update registry, :set, &block
+    registry.set(:foo, :bar)
+    registry.remove(:foo)
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [:foo, nil, :bar]
+  end
+
+  it 'should run on_update callback with a key and action' do
+    callback_listener.on_update registry, :foo, :set, &block
+    registry.set(:foo, :bar)
+    registry.set(:foo2, :bar2)
+    registry.remove(:foo)
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [nil, :bar]
+  end
+
+  it 'should run on_set callback with a key' do
+    callback_listener.on_set registry, :foo, &block
+    registry.set(:foo, :bar)
+    registry.set(:foo2, :bar2)
+    registry.remove(:foo)
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [nil, :bar]
+  end
+
+  it 'should run on_set callback with no key' do
+    pending "doesn't work yet"
+    callback_listener.on_set registry, &block
+    registry.set(:foo, :bar)
+    registry.remove(:foo)
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [:foo, nil, :bar]
+  end
+
+  it 'should run on_remove callback with a key' do
+    callback_listener.on_remove registry, :foo, &block
+    registry.set(:foo, :bar)
+    registry.remove(:foo)
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [:bar, nil]
+  end
+
+  it 'should run on_remove callback with no key' do
+    pending "doesn't work yet"
+    callback_listener.on_remove registry, &block
+    registry.set(:foo, :bar)
+    registry.remove(:foo)
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [:bar, nil]
+  end
+
+  it 'should run on_add_element callback with a key' do
+    callback_listener.on_add_element registry, :foo, &block
+    registry.set(:foo, [])
+    registry.set(:foo, ['1'])
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [nil, '1']
+  end
+
+  it 'should run on_add_element callback with no key' do
+    pending "doesn't work yet"
+    callback_listener.on_add_element registry, &block
+    registry.set(:foo, [])
+    registry.set(:foo, ['1'])
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == [nil, '1']
+  end
+
+  it 'should run on_remove_element callback with a key' do
+    callback_listener.on_remove_element registry, :foo, &block
+    registry.set(:foo, ['1', '2'])
+    registry.set(:foo, ['1'])
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == ['2', nil]
+  end
+
+  it 'should run on_remove_element callback with no key' do
+    pending "doesn't work yet"
+    callback_listener.on_remove_element registry, &block
+    registry.set(:foo, ['1', '2'])
+    registry.set(:foo, ['1'])
+
+    sleep Celluloid::TIMER_QUANTUM
+
+    callback_listener.callback_args.should == ['2', nil]
+  end
 end
 
 describe Telecine::Registry::Callbacks::Callback do

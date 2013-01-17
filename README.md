@@ -3,7 +3,7 @@
 [![Build Status](https://secure.travis-ci.org/grantr/telecine.png?branch=master)](http://travis-ci.org/grantr/telecine)
 [![Dependency Status](https://gemnasium.com/grantr/telecine.png)](https://gemnasium.com/grantr/telecine)
 
-Telecine is a work-in-progress on a RPC framework built on Celluloid.
+Telecine is a work-in-progress RPC framework built on Celluloid.
 
 ## Installation
 

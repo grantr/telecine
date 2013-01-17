@@ -42,27 +42,45 @@ module Telecine
       end
     end
 
-    # create a condition variable in a hash on request id, and wait on it.
-    # TODO this should be in the actor instead of the router
-    def request(node, name, method, *args)
-      @requests = {}
-      request = Message.new(nil, [], [name, method, *args])
-      @requests[request.id] = Condition.new
-      write(node.id, request.to_parts)
-      result = @requests[request.id].wait
-      
+    def call(identity, destination, method, *args)
+      @requests ||= {}
+      message = Message.new
+      message.headers = ["call"]
+      message.parts = [destination, method, *args]
+      @requests[message.id] = Condition.new
+      write(identity, *message.to_parts)
+      @requests[message.id].wait
     end
 
-    # dispatch should look to see if there is a condition var waiting on this request id. if so, broadcast the response. if not, what?
+    def cast(identity, destination, method, *args)
+      message = Message.new
+      message.headers = ["cast"]
+      message.parts = [destination, method, *args]
+      write(identity, *message.to_parts)
+    end
+
     def dispatch(identity, parts)
+      Logger.debug "received from #{identity}: #{parts.inspect}"
+
       message = Message.parse(parts)
-      Logger.debug "received from #{identity}: #{message.inspect}"
-      if @requests && @requests[message.id]
-        @requests[message.id].broadcast(message)
-      else
-        write(identity, Message.new(message.id, [], ["reply", "reply", 1]).to_parts)
+      Logger.debug "message: #{message.inspect}"
+
+      case message.headers.first
+      when "call"
+        result = Telecine.nodes.local.call(*message.parts)
+        reply = Message.new
+        reply.id = message.id
+        reply.headers = ["reply"]
+        reply.parts = result
+        write(identity, *reply.to_parts)
+      when "cast"
+        Telecine.nodes.local.cast(*message.parts)
+      when "reply"
+        if @requests && @requests[message.id]
+          #TODO use reply-ids
+          @requests[message.id].broadcast(message.parts)
+        end
       end
     end
-
   end
 end

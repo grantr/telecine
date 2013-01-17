@@ -58,41 +58,15 @@ module Telecine
       "Node id:#{@id} address:#{@address}"
     end
 
-
-    # TODO method dispatch
-    # calls come here first (from referenceables or the router)
-    # if this is the local node (Telecine.node.id == @id) then call the method on the 
-    # name or mailbox and wait for the result
-    # otherwise, this is a remote node, so forward the request to a router and wait for the reply (use futures to time out)
-    # (casts that don't need a reply need to be separate so that we don't create a condition for them)
-    #
-    
-    module MethodDispatch
-      def local?
-        Celluloid::Actor.current == Telecine.nodes.local
-      end
-
-      def call(destination, method, *args)
-        # cast then wait for a reply
-      end
-
-      def cast(destination, method, *args)
-        if local?
-          if mailbox = find_mailbox(destination)
-            Celluloid::Actor.async(mailbox, method, *args)
-          end
-        else
-          Logger.debug "forward to router: #{destination} #{method} #{args.inspect}"
-          # forward to router
-        end
-      end
-
-      def find_mailbox(destination)
-        actor = Celluloid::Actor[destination]
-        actor && actor.alive? ? actor.mailbox : nil
-      end
+    # call a method and wait for the response
+    def call(destination, method, *args)
+       Celluloid::Actor[:router].call(@id, destination, method, *args)
     end
-    include MethodDispatch
-    
+
+    # call a method without waiting for the response
+    def cast(destination, method, *args)
+      Celluloid::Actor[:router].cast(@id, destination, method, *args)
+    end
+
   end
 end

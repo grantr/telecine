@@ -64,6 +64,7 @@ module Celluloid
           async.listen if @peers.empty? && @peers.empty?
           begin
             @peers << peer
+            @socket.identity = @identity if @identity
             @socket.connect(peer)
           rescue IOError => e
             @socket.close

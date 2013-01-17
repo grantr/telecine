@@ -16,7 +16,7 @@ module Telecine
 
       # cast a method without waiting for the response
       def cast(method, *args)
-        router.cast(@node_id, @name, method, *args)
+        router.async.cast(@node_id, @name, method, *args)
       end
 
       def router

@@ -10,12 +10,16 @@ module Telecine
 
       on_set Telecine.node, :id do |previous, current|
         @identity = current
-        # if there are already bound endpoints, they must be rebound
-        # to get the new identity
-        unless @endpoints.empty?
-          endpoints = @endpoints.dup
-          clear_endpoints
-          endpoints.each { |endpoint| add_endpoint(endpoint) }
+        # binds and connects must be reset to get the new identity
+        @endpoints.each do |endpoint|
+          Logger.debug "resetting endpoint #{endpoint}"
+          remove_endpoint(endpoint)
+          add_endpoint(endpoint)
+        end
+        @peers.each do |peer|
+          Logger.debug "resetting peer #{peer}"
+          remove_peer(peer)
+          add_peer(peer)
         end
       end
 

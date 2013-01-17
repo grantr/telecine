@@ -24,7 +24,7 @@ module Telecine
     end
   end
 
-  class RemoteNotifier < Celluloid::ZMQ::PubsubNotifier
+  class Notifier < Celluloid::ZMQ::PubsubNotifier
     include Registry::Callbacks
 
     def initialize

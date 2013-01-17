@@ -6,8 +6,8 @@ require 'celluloid/zmq'
 require 'telecine/registry'
 require 'telecine/configuration'
 require 'telecine/configuration/local_node'
-require 'telecine/remote_notifications'
 
+require 'telecine/notifier'
 require 'telecine/router'
 
 module Telecine

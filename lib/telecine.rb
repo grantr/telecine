@@ -11,8 +11,6 @@ require 'telecine/notifier'
 require 'telecine/router'
 
 module Telecine
-  include Configurable
-
   class << self
     def nodes
       @nodes ||= Registry.new

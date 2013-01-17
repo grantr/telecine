@@ -1,5 +1,3 @@
-require 'telecine/failure_detector'
-
 module Telecine
   class Node
     include Celluloid
@@ -90,3 +88,5 @@ module Telecine
     end
   end
 end
+
+require 'telecine/node/failure_detector'

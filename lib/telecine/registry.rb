@@ -38,7 +38,8 @@ module Telecine
       end
     end
 
-    private :fetch, :store, :delete
+    #TODO does this mean we should be wrapping the hash instead?
+    private :fetch, :store, :delete, :[], :[]=
 
     def publish_update(key, previous, current)
       if previous.is_a?(Array) && current.is_a?(Array)

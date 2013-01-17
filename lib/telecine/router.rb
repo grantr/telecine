@@ -2,10 +2,21 @@ require 'celluloid/zmq/router'
 
 module Telecine
   class Router < Celluloid::ZMQ::Router
+    include Configurable
     include Registry::Callbacks
+
+    config_accessor :endpoint
 
     def initialize(*args)
       super
+
+      on_set config, :endpoint do |previous, current|
+        add_endpoint(current)
+      end
+
+      on_remove config, :endpoint do |previous, current|
+        remove_endpoint(previous)
+      end
 
       on_set Telecine.node, :id do |previous, current|
         @identity = current
@@ -20,14 +31,6 @@ module Telecine
           remove_peer(peer)
           add_peer(peer)
         end
-      end
-
-      on_set Telecine.config, :router_endpoint do |previous, current|
-        add_endpoint(current)
-      end
-
-      on_remove Telecine.config, :router_endpoint do |previous, current|
-        remove_endpoint(previous)
       end
 
       on_update Telecine.nodes do |key, action, previous, current|

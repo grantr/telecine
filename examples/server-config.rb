@@ -4,3 +4,4 @@ Telecine::Notifier.configure do |n|
   c.endpoint = "tcp://127.0.0.1:58000"
 end
 
+Telecine::Router.config.endpoint = "tcp://127.0.0.1:48000"

@@ -25,12 +25,15 @@ module Telecine
   end
 
   class Notifier < Celluloid::ZMQ::PubsubNotifier
+    include Configurable
     include Registry::Callbacks
+
+    config_accessor :peers, :endpoint
 
     def initialize
       super()
 
-      on_update Telecine.config, :broadcast_servers do |action, previous, current|
+      on_update config, :peers do |action, previous, current|
         case action
         when :set
           clear_peers
@@ -44,11 +47,11 @@ module Telecine
         end
       end
 
-      on_set Telecine.config, :broadcast_endpoint do |previous, current|
+      on_set config, :endpoint do |previous, current|
         add_endpoint(current)
       end
 
-      on_remove Telecine.config, :broadcast_endpoint do |previous, current|
+      on_remove config, :endpoint do |previous, current|
         remove_endpoint(previous)
       end
     end

@@ -5,4 +5,4 @@ Celluloid.logger = Celluloid::IncidentLogger.new
 Celluloid::EventReporter.supervise_as :default_event_reporter, STDOUT
 
 Telecine::Notifier.supervise_as :remote_notifier
-Telecine::Router.supervise_as :router, Telecine.node.id
+Telecine::Router.supervise_as :router

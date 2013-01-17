@@ -1,13 +1,15 @@
 require 'telecine/failure_detector'
 
 module Telecine
-  class RemoteNode
+  class Node
     include Celluloid
     include Celluloid::FSM
     include Celluloid::Notifications
 
     CHECK_INTERVAL = 1 #TODO config
 
+    #TODO add a Callbacks module that other actors can use
+    #like Registry::Callbacks
     state :unknown, default: true
     state :up do
       notify_state(:up)

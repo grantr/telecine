@@ -33,7 +33,7 @@ module Telecine
         end
       end
 
-      on_update Telecine.nodes do |key, action, previous, current|
+      on_update Node.registry do |key, action, previous, current|
         case action
         when :set
           Logger.debug "adding peer: #{key} #{current}"

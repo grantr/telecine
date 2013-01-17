@@ -11,12 +11,6 @@ require 'telecine/notifier'
 require 'telecine/router'
 
 module Telecine
-  class << self
-    def nodes
-      @nodes ||= Registry.new
-    end
-  end
-
   Logger = Celluloid::Logger
 end
 

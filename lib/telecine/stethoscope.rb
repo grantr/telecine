@@ -12,7 +12,7 @@ module Telecine
     def record_heartbeat(topic, node_id, node_address, heartbeat)
       Logger.trace "recording heartbeat from #{node_id} #{heartbeat}"
 
-      node = Telecine.nodes.get(node_id) { Node.new(node_id, node_address) }
+      node = Node.registry.get(node_id) { Node.new(node_id, node_address) }
       node.beat_heart(heartbeat)
     end
   end

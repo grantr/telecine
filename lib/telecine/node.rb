@@ -8,6 +8,10 @@ module Telecine
 
     config_accessor :id
 
+    def self.registry
+      @registry ||= Registry.new
+    end
+
     CHECK_INTERVAL = 1 #TODO config
 
     #TODO add a Callbacks module that other actors can use

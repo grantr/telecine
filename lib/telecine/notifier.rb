@@ -1,4 +1,4 @@
-require 'celluloid/zmq/pubsub_notifier'
+require 'celluloid/zmq/notifier'
 
 module Telecine
   module RemoteNotifications

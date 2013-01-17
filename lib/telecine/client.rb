@@ -1,10 +1,7 @@
 require 'telecine/stethoscope'
 
 module Telecine
-
-  module Client
-    class App < Celluloid::SupervisionGroup
-      supervise Stethoscope, as: :stethoscope
-    end
+  class Client < Celluloid::SupervisionGroup
+    supervise Stethoscope, as: :stethoscope
   end
 end

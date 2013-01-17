@@ -13,3 +13,5 @@ gem "ffi-rzmq", git: "https://github.com/chuckremes/ffi-rzmq"
 gem "celluloid", git: "https://github.com/grantr/celluloid"
 gem "celluloid-zmq", git: "https://github.com/grantr/celluloid-zmq"
 gem "celluloid-io", git: "https://github.com/celluloid/celluloid-io"
+
+gem 'rb-inotify'

@@ -1,5 +1,4 @@
 require 'celluloid/zmq/router'
-require 'telecine/message'
 
 module Telecine
   class Router < Celluloid::ZMQ::Router
@@ -106,3 +105,5 @@ module Telecine
     include LocalDispatch
   end
 end
+
+require 'telecine/router/message'

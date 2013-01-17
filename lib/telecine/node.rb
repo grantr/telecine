@@ -4,6 +4,10 @@ module Telecine
     include Celluloid::FSM
     include Celluloid::Notifications
 
+    include Configurable
+
+    config_accessor :id
+
     CHECK_INTERVAL = 1 #TODO config
 
     #TODO add a Callbacks module that other actors can use

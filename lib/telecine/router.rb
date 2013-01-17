@@ -18,7 +18,7 @@ module Telecine
         remove_endpoint(previous)
       end
 
-      on_set Telecine.node, :id do |previous, current|
+      on_set Node.config, :id do |previous, current|
         @identity = current
         # binds and connects must be reset to get the new identity
         @endpoints.each do |endpoint|

@@ -5,8 +5,8 @@ require 'celluloid/zmq'
 
 require 'telecine/registry'
 require 'telecine/configuration'
-require 'telecine/configuration/local_node'
 
+require 'telecine/node'
 require 'telecine/notifier'
 require 'telecine/router'
 
@@ -14,10 +14,6 @@ module Telecine
   include Configurable
 
   class << self
-    def node
-      @node ||= Configuration::LocalNode.new
-    end
-
     def nodes
       @nodes ||= Registry.new
     end

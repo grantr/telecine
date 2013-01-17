@@ -7,10 +7,17 @@ module Telecine
       @_id = id || Celluloid::UUID.generate
     end
 
-    def get(key)
+    # can pass a block to automically set the key if unset
+    def get(key, &block)
       return if key.nil?
       @_lock.synchronize do
-        fetch(key.to_sym, nil)
+        if has_key?(key.to_sym)
+          fetch(key.to_sym, nil)
+        elsif block_given?
+          value = yield
+          publish_update(key.to_sym, nil, value)
+          store(key.to_sym, value)
+        end
       end
     end
 

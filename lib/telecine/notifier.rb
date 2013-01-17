@@ -24,7 +24,7 @@ module Telecine
     end
   end
 
-  class Notifier < Celluloid::ZMQ::PubsubNotifier
+  class Notifier < Celluloid::ZMQ::Notifier
     include Configurable
     include Registry::Callbacks
 

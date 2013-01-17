@@ -1,6 +1,6 @@
 module Celluloid
   module ZMQ
-    class PubsubNotifier < Celluloid::Notifications::Fanout
+    class Notifier < Celluloid::Notifications::Fanout
       include Celluloid::ZMQ
 
       attr_accessor :peers, :endpoints

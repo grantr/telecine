@@ -9,6 +9,9 @@ end
 
 require 'telecine'
 
+Celluloid::Actor[:default_event_reporter].terminate if Celluloid::Actor[:default_event_reporter]
+Celluloid::Actor[:default_incident_reporter].terminate if Celluloid::Actor[:default_incident_reporter]
+
 Dir['./spec/support/*.rb'].map {|f| require f }
 
 RSpec.configure do |config|

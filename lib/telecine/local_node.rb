@@ -15,10 +15,9 @@ module Telecine
     end
 
     def find_mailbox(destination)
-      actor = Actor[destination]
+      actor = Actor[destination.to_sym]
       actor && actor.alive? ? actor.mailbox : nil
       #TODO return a mailbox if asked
     end
-
   end
 end

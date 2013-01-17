@@ -8,6 +8,7 @@ if ENV['COVERAGE'] == 'true' && RUBY_ENGINE == "ruby"
 end
 
 require 'telecine'
+require 'celluloid/rspec'
 
 Celluloid::Actor[:default_event_reporter].terminate if Celluloid::Actor[:default_event_reporter]
 Celluloid::Actor[:default_incident_reporter].terminate if Celluloid::Actor[:default_incident_reporter]

@@ -78,7 +78,7 @@ module Telecine
         raise ArgumentError, "must provide a registry" if registry.nil?
 
         registry_callbacks[registry._id] << callback
-        topic = [registry._topic, callback.key, callback.action].compact.join(".")
+        topic = [registry._topic, callback.key || ".*", callback.action].compact.join('\.')
 
         link Celluloid::Notifications.notifier
         Celluloid::Notifications.notifier.subscribe(Celluloid::Actor.current, /^#{topic}/, :dispatch_registry_callback)

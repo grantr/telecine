@@ -23,7 +23,7 @@ module Celluloid
         @monitor.terminate if @monitor
 
         @socket = RouterSocket.new
-        @monitor = SocketMonitor.new_link(@socket, "zmq.socket.#{Celluloid::UUID.generate}")
+        @monitor = SocketMonitor.new_link(@socket, "zmq.socket.#{Celluloid::UUID.generate}") if ::ZMQ::LibZMQ.version3?
         @socket
       end
 

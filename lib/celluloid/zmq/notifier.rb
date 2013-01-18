@@ -24,7 +24,7 @@ module Celluloid
         @pub_monitor.terminate if @pub_monitor
 
         @pub = PubSocket.new
-        @pub_monitor = SocketMonitor.new_link(@pub, "zmq.socket.#{Celluloid::UUID.generate}")
+        @pub_monitor = SocketMonitor.new_link(@pub, "zmq.socket.#{Celluloid::UUID.generate}") if ::ZMQ::LibZMQ.version3?
         @pub
       end
 
@@ -62,7 +62,7 @@ module Celluloid
         @sub_monitor.terminate if @sub_monitor
 
         @sub = SubSocket.new
-        @sub_monitor = SocketMonitor.new_link(@sub, "zmq.socket.#{Celluloid::UUID.generate}")
+        @sub_monitor = SocketMonitor.new_link(@sub, "zmq.socket.#{Celluloid::UUID.generate}") if ::ZMQ::LibZMQ.version3?
         @sub.subscribe("")
 
         #TODO add peers? could end up looping

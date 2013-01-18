@@ -3,13 +3,12 @@ module Telecine
     include Celluloid
     include Configurable
 
-    config_accessor :notifier
+    config_accessor :notifier, :heartbeat_interval
     self.notifier = :remote_notifier
-
-    HEARTBEAT = 1 #TODO setting
+    self.heartbeat_interval = 1
 
     def initialize
-      every(HEARTBEAT) { beat }
+      every(config.heartbeat_interval) { beat }
     end
 
     # heartbeat should include a list of referenceable actors and other things

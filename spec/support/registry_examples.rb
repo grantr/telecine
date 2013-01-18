@@ -24,12 +24,6 @@ shared_examples "a Registry" do
     subject.get(:foo).should be_nil
   end
 
-  it 'should not respond to hash methods' do
-    [:fetch, :store, :delete, :[], :[]=].each do |method|
-      subject.respond_to?(method).should be_false
-    end
-  end
-
   it 'should have a unique id' do
     subject._id.should_not be_nil
     described_class.new._id.should_not == subject._id

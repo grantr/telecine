@@ -16,6 +16,8 @@ module Telecine
       end
 
       # TODO deferred default support would be nice
+      # would also solve the problem of needing the whole infrastructure to be up
+      # when classes are required
       def config_accessor(*names)
         options = names.last.is_a?(Hash) ? names.pop : {}
 

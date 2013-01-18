@@ -15,6 +15,7 @@ module Telecine
         yield config
       end
 
+      # TODO deferred default support would be nice
       def config_accessor(*names)
         options = names.last.is_a?(Hash) ? names.pop : {}
 

@@ -31,6 +31,8 @@ module Telecine
       end
     end
 
+    #TODO would be nice to have an overridable instance config if desired. Maybe actors
+    # could include another module called ConfigOverride
     def config
       self.class.config
     end

@@ -25,7 +25,7 @@ module Telecine
 
           envelope.id = parts.shift
 
-          while (header = parts.shift) != ""
+          while !parts.empty? && (header = parts.shift) != ""
             envelope.headers << header
           end
           envelope

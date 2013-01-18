@@ -25,8 +25,7 @@ describe Telecine::Registry::Callbacks do
   end
 
   it 'should run on_update callback with an action' do
-    pending "doesn't work yet"
-    callback_listener.on_update registry, :set, &block
+    callback_listener.on_update registry, nil, :set, &block
     registry.set(:foo, :bar)
     registry.remove(:foo)
 
@@ -58,7 +57,6 @@ describe Telecine::Registry::Callbacks do
   end
 
   it 'should run on_set callback with no key' do
-    pending "doesn't work yet"
     callback_listener.on_set registry, &block
     registry.set(:foo, :bar)
     registry.remove(:foo)
@@ -79,14 +77,13 @@ describe Telecine::Registry::Callbacks do
   end
 
   it 'should run on_remove callback with no key' do
-    pending "doesn't work yet"
     callback_listener.on_remove registry, &block
     registry.set(:foo, :bar)
     registry.remove(:foo)
 
     sleep Celluloid::TIMER_QUANTUM
 
-    callback_listener.callback_args.should == [:bar, nil]
+    callback_listener.callback_args.should == [:foo, :bar, nil]
   end
 
   it 'should run on_add_element callback with a key' do
@@ -100,14 +97,13 @@ describe Telecine::Registry::Callbacks do
   end
 
   it 'should run on_add_element callback with no key' do
-    pending "doesn't work yet"
     callback_listener.on_add_element registry, &block
     registry.set(:foo, [])
     registry.set(:foo, ['1'])
 
     sleep Celluloid::TIMER_QUANTUM
 
-    callback_listener.callback_args.should == [nil, '1']
+    callback_listener.callback_args.should == [:foo, nil, '1']
   end
 
   it 'should run on_remove_element callback with a key' do
@@ -121,14 +117,13 @@ describe Telecine::Registry::Callbacks do
   end
 
   it 'should run on_remove_element callback with no key' do
-    pending "doesn't work yet"
     callback_listener.on_remove_element registry, &block
     registry.set(:foo, ['1', '2'])
     registry.set(:foo, ['1'])
 
     sleep Celluloid::TIMER_QUANTUM
 
-    callback_listener.callback_args.should == ['2', nil]
+    callback_listener.callback_args.should == [:foo, '2', nil]
   end
 end
 

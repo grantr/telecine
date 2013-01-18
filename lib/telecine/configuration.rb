@@ -13,7 +13,7 @@ module Telecine
     end
 
     def compile_methods!
-      @lock.synchronize do
+      @_lock.synchronize do
         self.class.compile_methods!(keys)
       end
     end

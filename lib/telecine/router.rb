@@ -15,21 +15,25 @@ module Telecine
       end
 
       on_remove config, :endpoint do |previous, current|
-        remove_endpoint(previous)
+        respond_to?(:remove_endpoint) ? remove_endpoint(previous) : Logger.warn("Cannot remove endpoint: #{previous}")
       end
 
       on_set Node.config, :id do |previous, current|
         @identity = current
         # binds and connects must be reset to get the new identity
-        @endpoints.each do |endpoint|
-          Logger.debug "resetting endpoint #{endpoint}"
-          remove_endpoint(endpoint)
-          add_endpoint(endpoint)
-        end
-        @peers.each do |peer|
-          Logger.debug "resetting peer #{peer}"
-          remove_peer(peer)
-          add_peer(peer)
+        if respond_to?(:remove_endpoint)
+          @endpoints.each do |endpoint|
+            Logger.debug "resetting endpoint #{endpoint}"
+            remove_endpoint(endpoint)
+            add_endpoint(endpoint)
+          end
+          @peers.each do |peer|
+            Logger.debug "resetting peer #{peer}"
+            remove_peer(peer)
+            add_peer(peer)
+          end
+        else
+          Logger.warn("Cannot reset endpoints and peers")
         end
       end
 
@@ -39,7 +43,7 @@ module Telecine
           Logger.debug "adding peer: #{key} #{current}"
           add_peer(current.address)
         when :remove
-          remove_peer(previous.address)
+          respond_to?(:remove_peer) ? remove_peer(previous.address) : Logger.warn("Cannot remove peer: #{previous.address}")
         end
       end
     end

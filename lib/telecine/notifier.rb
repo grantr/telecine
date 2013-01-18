@@ -36,14 +36,14 @@ module Telecine
       on_update config, :peers do |action, previous, current|
         case action
         when :set
-          clear_peers
+          respond_to?(:clear_peers) ? clear_peers : Logger.warn("Cannot clear peers")
           current.each { |endpoint| add_peer(endpoint) }
         when :remove_element
-          remove_peer(previous)
+          respond_to?(:remove_peer) ? remove_peer(previous) : Logger.warn("Cannot remove peer: #{previous}")
         when :add_element
           add_peer(current)
         when :remove
-          clear_peers
+          respond_to?(:clear_peers) ? clear_peers : Logger.warn("Cannot clear peers")
         end
       end
 
@@ -52,7 +52,7 @@ module Telecine
       end
 
       on_remove config, :endpoint do |previous, current|
-        remove_endpoint(previous)
+        respond_to?(:remove_endpoint) ? remove_endpoint(previous) : Logger.warn("Cannot remove endpoint: #{previous}")
       end
     end
   end

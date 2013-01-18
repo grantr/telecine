@@ -33,8 +33,8 @@ module Telecine
 
         def to_parts
           [
-            version,
-            id,
+            version.to_s,
+            id.to_s,
             *Array(headers).collect(&:to_s), # json?
             ""
           ]

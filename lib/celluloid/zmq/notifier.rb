@@ -41,20 +41,22 @@ module Celluloid
         end
       end
 
-      def remove_endpoint(endpoint)
-        if @endpoints.include?(endpoint)
-          begin
-            @endpoints.delete(endpoint)
-            @pub.unbind(endpoint)
-          rescue IOError => e
-            @pub.close
-            raise e
+      if ::ZMQ::LibZMQ.version3?
+        def remove_endpoint(endpoint)
+          if @endpoints.include?(endpoint)
+            begin
+              @endpoints.delete(endpoint)
+              @pub.unbind(endpoint)
+            rescue IOError => e
+              @pub.close
+              raise e
+            end
           end
         end
-      end
 
-      def clear_endpoints
-        @endpoints.dup.each { |endpoint| remove_endpoint(endpoint) }
+        def clear_endpoints
+          @endpoints.dup.each { |endpoint| remove_endpoint(endpoint) }
+        end
       end
 
       def init_sub_socket
@@ -82,20 +84,22 @@ module Celluloid
         end
       end
 
-      def remove_peer(peer)
-        if @peers.include?(peer)
-          begin
-            @peers.delete(peer)
-            @sub.disconnect(peer)
-          rescue IOError => e
-            @sub.close
-            raise e
+      if ::ZMQ::LibZMQ.version3?
+        def remove_peer(peer)
+          if @peers.include?(peer)
+            begin
+              @peers.delete(peer)
+              @sub.disconnect(peer)
+            rescue IOError => e
+              @sub.close
+              raise e
+            end
           end
         end
-      end
 
-      def clear_peers
-        @peers.dup.each { |peer| remove_peer(peer) }
+        def clear_peers
+          @peers.dup.each { |peer| remove_peer(peer) }
+        end
       end
 
       def listen

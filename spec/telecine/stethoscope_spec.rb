@@ -8,6 +8,10 @@ describe Telecine::Stethoscope do
     Telecine::Stethoscope.notifier.should == :remote_notifier
   end
 
+  it 'should set default topic' do
+    Telecine::Heart.topic.should == "telecine.heartbeat"
+  end
+
   it 'should allow notifier override' do
     Telecine::Stethoscope.notifier = fanout_notifier.name
     Telecine::Stethoscope.notifier.should == fanout_notifier.name

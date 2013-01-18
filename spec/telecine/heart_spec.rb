@@ -8,6 +8,14 @@ describe Telecine::Heart do
     Telecine::Heart.notifier.should == :remote_notifier
   end
 
+  it 'should set default heartbeat_interval' do
+    Telecine::Heart.heartbeat_interval.should == 1
+  end
+
+  it 'should set default topic' do
+    Telecine::Heart.topic.should == "telecine.heartbeat"
+  end
+
   it 'should allow notifier override' do
     Telecine::Heart.notifier = fanout_notifier.name
     Telecine::Heart.notifier.should == fanout_notifier.name
@@ -31,7 +39,7 @@ describe Telecine::Heart do
     subscriber.subscribe('telecine.heartbeat')
     @subject = described_class.new
 
-    sleep Telecine::Heart::HEARTBEAT*2
+    sleep 2
     subscriber.events.size.should be_within(1).of(2)
   end
 

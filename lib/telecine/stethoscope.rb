@@ -5,12 +5,14 @@ module Telecine
     include Celluloid
     include Configurable
 
-    config_accessor :notifier
+    config_accessor :notifier, :topic
     self.notifier = :remote_notifier
+    self.topic = "telecine.heartbeat"
+
 
     def initialize
       link notifier
-      notifier.subscribe(Actor.current, /^telecine.heartbeat/, :record_heartbeat)
+      notifier.subscribe(Actor.current, /^#{config.topic}/, :record_heartbeat)
     end
 
     def record_heartbeat(topic, node_id, node_address, heartbeat)

@@ -1,29 +1,6 @@
 require 'celluloid/zmq/notifier'
 
 module Telecine
-  module RemoteNotifications
-    def self.notifier
-      Celluloid::Actor[:remote_notifier]
-    end
-
-    def remote_notifier
-      Telecine::RemoteNotifications.notifier
-    end
-
-    def remote_publish(pattern, *args)
-      Telecine::RemoteNotifications.notifier.async.publish(pattern, *args)
-    end
-
-    def remote_subscribe(pattern, method)
-      link remote_notifier
-      Telecine::RemoteNotifications.notifier.subscribe(Celluloid::Actor.current, pattern, method)
-    end
-
-    def remote_unsubscribe(*args)
-      Telecine::RemoteNotifications.notifier.unsubscribe(*args)
-    end
-  end
-
   class Notifier < Celluloid::ZMQ::Notifier
     include Configurable
     include Registry::Callbacks

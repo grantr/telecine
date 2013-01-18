@@ -6,13 +6,12 @@ module Telecine
 
     include Configurable
 
-    config_accessor :id
+    config_accessor :id, :check_interval
+    self.check_interval = 1
 
     def self.registry
       @registry ||= Registry.new
     end
-
-    CHECK_INTERVAL = 1 #TODO config
 
     #TODO add a Callbacks module that other actors can use
     #like Registry::Callbacks
@@ -42,7 +41,7 @@ module Telecine
       end
 
       if @fd.empty?
-        @timer = every(CHECK_INTERVAL) { check }
+        @timer = every(config.check_interval) { check }
       end
       @fd.add(Time.now.to_i)
     end

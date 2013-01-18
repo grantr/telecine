@@ -7,6 +7,7 @@ module Telecine
     include Configurable
 
     config_accessor :id, :check_interval
+    self.id = Celluloid::UUID.generate
     self.check_interval = 1
 
     def self.registry

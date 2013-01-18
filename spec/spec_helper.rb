@@ -18,4 +18,14 @@ Dir['./spec/support/*.rb'].map {|f| require f }
 RSpec.configure do |config|
   config.filter_run :focus => true
   config.run_all_when_everything_filtered = true
+
+  # terminate actors created during tests
+  config.before(:each) do
+    @running_actors = Celluloid::Actor.all
+  end
+
+  config.after(:each) do
+    new_actors = Celluloid::Actor.all - @running_actors
+    new_actors.each(&:terminate)
+  end
 end

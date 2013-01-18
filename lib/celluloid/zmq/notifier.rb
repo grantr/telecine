@@ -20,8 +20,8 @@ module Celluloid
       end
 
       def init_pub_socket
-        @pub.close if @pub
         @pub_monitor.terminate if @pub_monitor
+        @pub.close if @pub
 
         @pub = PubSocket.new
         @pub_monitor = SocketMonitor.new_link(@pub, "zmq.socket.#{Celluloid::UUID.generate}") if ::ZMQ::LibZMQ.version3?
@@ -58,8 +58,8 @@ module Celluloid
       end
 
       def init_sub_socket
-        @sub.close if @sub
         @sub_monitor.terminate if @sub_monitor
+        @sub.close if @sub
 
         @sub = SubSocket.new
         @sub_monitor = SocketMonitor.new_link(@sub, "zmq.socket.#{Celluloid::UUID.generate}") if ::ZMQ::LibZMQ.version3?
@@ -120,7 +120,9 @@ module Celluloid
       # end
 
       def finalize
+        @pub_monitor.terminate if @pub_monitor
         @pub.close if @pub
+        @sub_monitor.terminate if @sub_monitor
         @sub.close if @sub
       end
     end

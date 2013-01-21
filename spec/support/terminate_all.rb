@@ -1,5 +1,5 @@
 module TerminateAll
   def terminate_all(klass)
-    Celluloid::Actor.all.select { |a| a.class == klass && a.alive? }.each(&:terminate)
+    Celluloid::Actor.all.each { |a| a.terminate if a.class == klass && a.alive? }
   end
 end

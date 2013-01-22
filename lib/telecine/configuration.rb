@@ -2,6 +2,8 @@ module Telecine
   class Configuration < Registry
 
     def initialize(parent=nil)
+      #TODO this should tell the parent about its children so it can broadcast changes
+      # (as long as the child hasn't overridden the value)
       if parent
         super() { |h, k| parent.get(k) }
       else

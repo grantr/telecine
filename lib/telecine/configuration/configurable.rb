@@ -8,7 +8,7 @@ module Telecine
     module ClassMethods
       def config
         # create a new "anonymous" class that will host the compiled reader methods
-        @config ||= Class.new(Configuration).new
+        @_config ||= Class.new(Configuration).new
       end
 
       def configure

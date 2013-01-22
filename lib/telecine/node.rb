@@ -61,7 +61,7 @@ module Telecine
     end
 
     # overridden because inspect causes stack overflow
-    # TODO why?
+    # TODO remove when this is fixed: https://github.com/celluloid/celluloid/issues/22
     def inspect
       "Node id:#{@id} address:#{@address}"
     end

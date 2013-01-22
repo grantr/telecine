@@ -1,3 +1,5 @@
+#TODO Heart and Stethoscope should move into a separate gem, maybe telecine-disco-broadcast.
+# This is only one discovery mechanism of many.
 module Telecine
   class Heart
     include Celluloid

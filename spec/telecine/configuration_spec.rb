@@ -42,4 +42,50 @@ describe Telecine::Configuration do
     child.get(:inherited).should == "child"
     subject.get(:inherited).should == "parent"
   end
+
+  context "child publishing" do
+    it 'should maintain a list of children' do
+      child = subject.inheritable_copy
+      subject._children.should include(child)
+    end
+
+    it 'should publish to children' do
+      child = subject.inheritable_copy
+      subscriber = Subscriber.new
+      subscriber.subscribe("#{child._topic}.foo.set")
+      subject.set(:foo, "bar")
+      sleep Celluloid::TIMER_QUANTUM
+      subscriber.events.should_not be_empty
+    end
+
+    it 'should not publish to children that have the key' do
+      child = subject.inheritable_copy
+      child.set(:foo, "baz")
+      subscriber = Subscriber.new
+      subscriber.subscribe("#{child._topic}.foo.set")
+      subject.set(:foo, "bar")
+      sleep Celluloid::TIMER_QUANTUM
+      subscriber.events.should be_empty
+    end
+
+    it 'should publish to children that removed their key' do
+      child = subject.inheritable_copy
+      child.set(:foo, "baz")
+      child.remove(:foo)
+      subscriber = Subscriber.new
+      subscriber.subscribe("#{child._topic}.foo.set")
+      subject.set(:foo, "bar")
+      sleep Celluloid::TIMER_QUANTUM
+      subscriber.events.should_not be_empty
+    end
+
+    it 'should prune children that go out of scope' do
+      block = lambda do
+        child = subject.inheritable_copy
+        subject._children.should include(child)
+      end
+      subject.set(:foo, "bar") # must publish to prune
+      subject._children.should be_empty
+    end
+  end
 end

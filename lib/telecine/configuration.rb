@@ -1,3 +1,5 @@
+require 'weakref'
+
 module Telecine
   class Configuration < Registry
 
@@ -5,6 +7,7 @@ module Telecine
       #TODO this should tell the parent about its children so it can broadcast changes
       # (as long as the child hasn't overridden the value)
       if parent
+        parent._children << WeakRef.new(self)
         super() { |h, k| parent.get(k) }
       else
         super()
@@ -13,6 +16,10 @@ module Telecine
 
     def inheritable_copy
       self.class.new(self)
+    end
+
+    def _children
+      @_children ||= []
     end
 
     def method_missing(name, *args)
@@ -47,6 +54,14 @@ module Telecine
         end
       end
       #TODO writer methods
+    end
+
+    def _publish(key, action, previous, current)
+      super
+      _children.each do |child|
+        child._publish(key, action, previous, current) if child.weakref_alive? && !child.has_key?(key)
+      end
+      _children.reject! { |child| !child.weakref_alive? }
     end
   end
 end

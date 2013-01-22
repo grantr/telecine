@@ -24,4 +24,22 @@ describe Telecine::Configuration do
     expect { subject.foo }.to_not raise_error
     subject.foo.should == "bar"
   end
+
+  it 'should take a parent in initialize' do
+    child = described_class.new(subject)
+    subject.set(:inherited, "parent")
+    child.get(:inherited).should == "parent"
+    child.set(:inherited, "child")
+    child.get(:inherited).should == "child"
+    subject.get(:inherited).should == "parent"
+  end
+
+  it 'should create a child copy' do
+    child = subject.inheritable_copy
+    subject.set(:inherited, "parent")
+    child.get(:inherited).should == "parent"
+    child.set(:inherited, "child")
+    child.get(:inherited).should == "child"
+    subject.get(:inherited).should == "parent"
+  end
 end

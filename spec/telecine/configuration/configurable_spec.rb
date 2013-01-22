@@ -40,9 +40,18 @@ describe Telecine::Configurable do
   end
 
   context '#config' do
-    it 'should reference the class config' do
+    it 'should be a new Configuration' do
       ConfiguredClass.new.config.should be_a(Telecine::Configuration)
-      ConfiguredClass.new.config.should == ConfiguredClass.config
+      ConfiguredClass.new.config.should_not equal(ConfiguredClass.config)
+    end
+
+    it 'should use the class config as parent' do
+      config = ConfiguredClass.new.config
+      ConfiguredClass.config.set(:inherited, "parent")
+      config.get(:inherited).should == "parent"
+      config.set(:inherited, "child")
+      config.get(:inherited).should == "child"
+      ConfiguredClass.config.get(:inherited).should == "parent"
     end
   end
 

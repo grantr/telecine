@@ -2,21 +2,22 @@ module Telecine
   class Registry < Hash
     attr_accessor :_id
 
-    def initialize(id=nil)
+    def initialize(*args)
+      super
       @_lock = Mutex.new
-      @_id = id || Celluloid::UUID.generate
+      @_id = Celluloid::UUID.generate
     end
 
     # can pass a block to automically set the key if unset
     def get(key, &block)
       return if key.nil?
       @_lock.synchronize do
-        if has_key?(key.to_sym)
-          fetch(key.to_sym, nil)
-        elsif block_given?
+        if !has_key?(key.to_sym) && block_given?
           value = yield
           publish_update(key.to_sym, nil, value)
           store(key.to_sym, value)
+        else
+          self[key.to_sym]
         end
       end
     end
@@ -24,7 +25,7 @@ module Telecine
     def set(key, value)
       raise "Cannot store value with nil key" if key.nil?
       @_lock.synchronize do
-        publish_update(key.to_sym, fetch(key.to_sym, nil), value)
+        publish_update(key.to_sym, self[key.to_sym], value)
         store(key.to_sym, value)
       end
     end

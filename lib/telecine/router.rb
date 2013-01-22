@@ -6,6 +6,8 @@ module Telecine
     include Registry::Callbacks
 
     config_accessor :endpoint
+    config_accessor :dispatcher
+    self.dispatcher = :dispatcher
 
     def initialize(*args)
       super
@@ -73,14 +75,14 @@ module Telecine
 
       case message.headers.first
       when "call"
-        result = dispatch_call(*message.parts)
+        result = dispatcher.call(*message.parts)
         reply = Message.new
         reply.id = message.id
         reply.headers = ["reply"]
         reply.parts = result
         write(identity, *reply.to_parts)
       when "cast"
-        dispatch_cast(*message.parts)
+        dispatcher.cast(*message.parts)
       when "reply"
         if @requests && @requests[message.id]
           #TODO use reply-ids
@@ -89,27 +91,9 @@ module Telecine
       end
     end
 
-    module LocalDispatch
-
-      def dispatch_call(destination, method, *args)
-        if mailbox = find_mailbox(destination)
-          Celluloid::Actor.call(mailbox, method, *args)
-        end
-      end
-
-      def dispatch_cast(destination, method, *args)
-        if mailbox = find_mailbox(destination)
-          Celluloid::Actor.async(mailbox, method, *args)
-        end
-      end
-
-      def find_mailbox(destination)
-        actor = Celluloid::Actor[destination.to_sym]
-        actor && actor.alive? ? actor.mailbox : nil
-        #TODO return a mailbox if asked
-      end
+    def dispatcher
+      config.dispatcher.is_a?(Symbol) ? Celluloid::Actor[config.dispatcher] : config.dispatcher
     end
-    include LocalDispatch
   end
 end
 

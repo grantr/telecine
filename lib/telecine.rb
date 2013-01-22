@@ -12,6 +12,7 @@ require 'telecine/configuration'
 
 require 'telecine/node'
 require 'telecine/notifier'
+require 'telecine/dispatcher'
 require 'telecine/router'
 
 require 'telecine/client'

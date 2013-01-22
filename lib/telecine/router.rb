@@ -77,16 +77,15 @@ module Telecine
       when "call"
         result = dispatcher.call(*message.parts)
         reply = Message.new
-        reply.id = message.id
-        reply.headers = ["reply"]
+        reply.headers = ["reply", message.id]
         reply.parts = result
         write(identity, *reply.to_parts)
       when "cast"
         dispatcher.cast(*message.parts)
       when "reply"
-        if @requests && @requests[message.id]
-          #TODO use reply-ids
-          @requests[message.id].broadcast(message.parts)
+        reply_id = message.headers[1]
+        if @requests && @requests[reply_id]
+          @requests[reply_id].broadcast(message.parts)
         end
       end
     end

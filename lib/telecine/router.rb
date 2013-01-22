@@ -73,6 +73,8 @@ module Telecine
       message = Message.parse(parts)
       Logger.debug "message: #{message.inspect}"
 
+      #TODO Message should decide what type it is and how to handle headers.
+      # Call, Cast, and Reply should be subclasses.
       case message.headers.first
       when "call"
         result = dispatcher.call(*message.parts)

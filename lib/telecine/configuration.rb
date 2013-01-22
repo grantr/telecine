@@ -1,5 +1,18 @@
 module Telecine
   class Configuration < Registry
+
+    def initialize(parent=nil)
+      if parent
+        super() { |h, k| parent.get(k) }
+      else
+        super()
+      end
+    end
+
+    def inheritable_copy
+      self.class.new(self)
+    end
+
     def method_missing(name, *args)
       if name.to_s =~ /(.*)=$/
         set($1, args.first)
@@ -33,7 +46,6 @@ module Telecine
       end
       #TODO writer methods
     end
-
   end
 end
 

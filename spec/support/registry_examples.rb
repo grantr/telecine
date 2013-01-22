@@ -29,8 +29,9 @@ shared_examples "a Registry" do
     described_class.new._id.should_not == subject._id
   end
 
-  it 'should take an id in initialize' do
-    described_class.new('id')._id.should == 'id'
+  it 'should take block default arg' do
+    subject = described_class.new { "foo" }
+    subject.get(:foo).should == "foo"
   end
 
   context 'getset' do

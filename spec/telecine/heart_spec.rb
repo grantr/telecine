@@ -5,7 +5,7 @@ describe Telecine::Heart do
   let(:fanout_notifier) { Celluloid::Notifications.notifier }
   
   it 'should set default notifier' do
-    Telecine::Heart.notifier.should == :remote_notifier
+    Telecine::Heart.config.notifier.should == :remote_notifier
   end
 
   it 'should set default heartbeat_interval' do
@@ -17,13 +17,13 @@ describe Telecine::Heart do
   end
 
   it 'should allow notifier override' do
-    Telecine::Heart.notifier = fanout_notifier.name
-    Telecine::Heart.notifier.should == fanout_notifier.name
+    Telecine::Heart.config.notifier = fanout_notifier.name
+    Telecine::Heart.config.notifier.should == fanout_notifier.name
   end
 
   it 'should get the notifier actor in instances' do
-    Telecine::Heart.notifier = fanout_notifier.name
-    Telecine::Heart.notifier.should == fanout_notifier.name
+    Telecine::Heart.config.notifier = fanout_notifier.name
+    Telecine::Heart.config.notifier.should == fanout_notifier.name
     subject.notifier.should be(fanout_notifier)
   end
 

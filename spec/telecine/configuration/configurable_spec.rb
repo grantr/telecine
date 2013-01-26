@@ -39,6 +39,42 @@ describe Telecine::Configurable do
     end
   end
 
+  context 'actor_accessor' do
+    it 'should compile methods on the class' do
+      ConfiguredClass.class_eval do
+        actor_accessor :actor1
+      end
+
+      ConfiguredClass.respond_to?(:actor1).should be_true
+      ConfiguredClass.actor1 = :hoo
+      ConfiguredClass.config.actor1.should == :hoo
+      ConfiguredClass.actor1.should == nil # There is no :hoo named actor
+    end
+
+    it 'should take multiple attribute names' do
+      ConfiguredClass.class_eval do
+        actor_accessor :actor2, :actor3
+      end
+
+      ConfiguredClass.respond_to?(:actor2).should be_true
+      ConfiguredClass.respond_to?(:actor3).should be_true
+    end
+
+    it 'should return the named actor if symbol value' do
+      ConfiguredClass.class_eval do
+        actor_accessor :actor4
+      end
+
+      subscriber = Subscriber.supervise_as(:subscriber4).actors.first
+
+      ConfiguredClass.actor4 = :subscriber4
+      ConfiguredClass.actor4.should be(subscriber)
+
+      ConfiguredClass.actor4 = subscriber
+      ConfiguredClass.actor4.should be(subscriber)
+    end
+  end
+
   context '#config' do
     it 'should be a new Configuration' do
       ConfiguredClass.new.config.should be_a(Telecine::Configuration)

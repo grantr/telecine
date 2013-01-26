@@ -5,7 +5,7 @@ describe Telecine::Stethoscope do
   let(:fanout_notifier) { Celluloid::Notifications.notifier }
   
   it 'should set default notifier' do
-    Telecine::Stethoscope.notifier.should == :remote_notifier
+    Telecine::Stethoscope.config.notifier.should == :remote_notifier
   end
 
   it 'should set default topic' do
@@ -13,13 +13,13 @@ describe Telecine::Stethoscope do
   end
 
   it 'should allow notifier override' do
-    Telecine::Stethoscope.notifier = fanout_notifier.name
-    Telecine::Stethoscope.notifier.should == fanout_notifier.name
+    Telecine::Stethoscope.config.notifier = fanout_notifier.name
+    Telecine::Stethoscope.config.notifier.should == fanout_notifier.name
   end
 
   it 'should get the notifier actor in instances' do
-    Telecine::Stethoscope.notifier = fanout_notifier.name
-    Telecine::Stethoscope.notifier.should == fanout_notifier.name
+    Telecine::Stethoscope.config.notifier = fanout_notifier.name
+    Telecine::Stethoscope.config.notifier.should == fanout_notifier.name
     subject.notifier.should be(fanout_notifier)
   end
 

@@ -107,7 +107,7 @@ module Celluloid
           parts = @socket.read_multipart
           identity = parts.shift
           parts.shift
-          dispatch(identity, parts)
+          async.dispatch(identity, parts)
         end
       end
 

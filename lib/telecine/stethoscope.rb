@@ -5,7 +5,8 @@ module Telecine
     include Celluloid
     include Configurable
 
-    config_accessor :notifier, :topic
+    config_accessor :topic
+    actor_accessor :notifier
     self.notifier = :remote_notifier
     self.topic = "telecine.heartbeat"
 
@@ -20,10 +21,6 @@ module Telecine
 
       node = Node.registry.get(node_id) { Node.new(node_id, node_address) }
       node.beat_heart(heartbeat)
-    end
-
-    def notifier
-      config.notifier.is_a?(Symbol) ? Celluloid::Actor[config.notifier] : config.notifier
     end
   end
 end

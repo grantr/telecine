@@ -5,7 +5,8 @@ module Telecine
     include Celluloid
     include Configurable
 
-    config_accessor :notifier, :heartbeat_interval, :topic
+    config_accessor :heartbeat_interval, :topic
+    actor_accessor :notifier
     self.notifier = :remote_notifier
     self.heartbeat_interval = 1
     self.topic = "telecine.heartbeat"
@@ -19,10 +20,6 @@ module Telecine
     def beat
       Logger.trace "beat heart #{Node.id} #{Time.now.to_i}"
       notifier.async.publish(config.topic, Node.id, Router.endpoint, Time.now.to_i.to_s)
-    end
-
-    def notifier
-      config.notifier.is_a?(Symbol) ? Celluloid::Actor[config.notifier] : config.notifier
     end
   end
 end

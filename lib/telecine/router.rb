@@ -6,7 +6,7 @@ module Telecine
     include Registry::Callbacks
 
     config_accessor :endpoint
-    config_accessor :dispatcher
+    actor_accessor :dispatcher
     self.dispatcher = :dispatcher
 
     def initialize(*args)
@@ -90,10 +90,6 @@ module Telecine
           @requests[reply_id].broadcast(message.parts)
         end
       end
-    end
-
-    def dispatcher
-      config.dispatcher.is_a?(Symbol) ? Celluloid::Actor[config.dispatcher] : config.dispatcher
     end
   end
 end

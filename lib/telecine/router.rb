@@ -77,7 +77,12 @@ module Telecine
       # Call, Cast, and Reply should be subclasses.
       case message.headers.first
       when "call"
-        result = dispatcher.call(*message.parts)
+        begin
+          result = dispatcher.call(*message.parts)
+        rescue MailboxNotFound
+          Logger.warn "mailbox not found for #{message.parts.first}"
+          return
+        end
         reply = Message.new
         reply.headers = ["reply", message.id]
         reply.parts = result

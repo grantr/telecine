@@ -1,4 +1,6 @@
 module Telecine
+  class MailboxNotFound < StandardError; end
+
   class Dispatcher
     include Celluloid
 
@@ -20,6 +22,8 @@ module Telecine
       Logger.debug("got call: #{reference_id}, #{method}, #{args.inspect}")
       if mailbox = find_mailbox(reference_id)
         Celluloid::Actor.call(mailbox, method, *args)
+      else
+        abort MailboxNotFound.new
       end
     end
 

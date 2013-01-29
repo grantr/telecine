@@ -1,3 +1,5 @@
+require 'uri'
+
 module Telecine
   class Reference
     attr_accessor :node_id, :name, :router
@@ -20,6 +22,18 @@ module Telecine
 
     def router
       @router.is_a?(Symbol) ? Celluloid::Actor[@router] : @router
+    end
+
+    def to_s
+      "tcr://#{node_id}/#{name}"
+    end
+
+    def self.parse(string)
+      uri = URI.parse(string)
+      if uri.scheme == "tcr"
+        new(uri.host, uri.path.sub(/^\//, ''))
+        #TODO should this raise otherwise?
+      end
     end
   end
 end

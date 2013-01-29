@@ -1,3 +1,5 @@
+require 'telecine/reference'
+
 module Telecine
   class Node
     include Celluloid
@@ -74,4 +76,3 @@ module Telecine
 end
 
 require 'telecine/node/failure_detector'
-require 'telecine/node/reference'

@@ -3,19 +3,29 @@ module Telecine
 
   class Dispatcher
     include Celluloid
+    include Configurable
+
+    config_accessor :registered_name
+    self.registered_name = :dispatcher
+
+    # only allow remote calls to public methods (this is already the celluloid default)
+    # not really sufficient, since we might want local actors to call methods
+    # that remote actors cannot access
 
     def registry
       @registry ||= Registry.new
     end
 
     # this class takes care of finding actors to dispatch method calls to, and returning the result if necessary.
-    # it manages actors publishing capabilities and external capabilities incoming from the router. It hands out capabilities to remote nodes (ie bootstrap)
-    #
-    # actors publish which methods they want accessible, and any parameters
+    def initialize
+      register(Actor.current, config.registered_name)
+    end
 
-    def register(actor, reference_id)
-      Logger.debug("registering #{actor.mailbox.inspect} as #{reference_id}")
-      registry.set(reference_id, actor.mailbox)
+    # returns the registered_name
+    def register(actor, registered_name, options={})
+      Logger.debug("registering #{actor.mailbox.inspect} as #{registered_name}")
+      registry.set(registered_name, actor.mailbox)
+      registered_name
     end
 
     def call(reference_id, method, *args)

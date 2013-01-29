@@ -1,3 +1,5 @@
+require 'telecine/reference'
+
 module Telecine
   class MailboxNotFound < StandardError; end
 
@@ -31,6 +33,12 @@ module Telecine
     def unregister(registered_name)
       Logger.debug("unregistering #{registered_name}")
       registry.remove(registered_name)
+    end
+
+    def find(registered_name)
+      if registry.get(registered_name)
+        Reference.new(Node.id, registered_name)
+      end
     end
 
     def call(reference_id, method, *args)

@@ -28,6 +28,11 @@ module Telecine
       registered_name
     end
 
+    def unregister(registered_name)
+      Logger.debug("unregistering #{registered_name}")
+      registry.remove(registered_name)
+    end
+
     def call(reference_id, method, *args)
       Logger.debug("got call: #{reference_id}, #{method}, #{args.inspect}")
       if mailbox = find_mailbox(reference_id)

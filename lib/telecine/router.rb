@@ -85,14 +85,14 @@ module Telecine
         end
         reply = Message.new
         reply.headers = ["reply", message.id]
-        reply.parts = result
+        reply.parts = [result]
         write(identity, *reply.to_parts)
       when "cast"
         dispatcher.cast(*message.parts)
       when "reply"
         reply_id = message.headers[1]
         if @requests && @requests[reply_id]
-          @requests[reply_id].broadcast(message.parts)
+          @requests[reply_id].broadcast(*message.parts)
         end
       end
     end

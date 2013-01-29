@@ -7,8 +7,12 @@ module Telecine
 
     module ClassMethods
       def config
-        # create a new "anonymous" class that will host the compiled reader methods
-        @_config ||= Class.new(Configuration).new
+        @_config ||= if respond_to?(:superclass) && superclass.respond_to?(:config)
+          superclass.config.inheritable_copy
+        else
+          # create a new "anonymous" class that will host the compiled reader methods
+          Class.new(Configuration).new
+        end
       end
 
       def configure

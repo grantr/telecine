@@ -17,6 +17,17 @@ describe Telecine::Configurable do
     ConfiguredClass.config.foo.should == :bar
   end
 
+  it 'should inherit from superclass' do
+    ConfiguredClass.config.c1 = :foo
+    subclass = Class.new(ConfiguredClass)
+
+    subclass.config.c1.should == :foo
+
+    subclass.config.c1 = :foo2
+    ConfiguredClass.config.c1.should == :foo
+    subclass.config.c1.should == :foo2
+  end
+
   context 'config_accessor' do
     it 'should compile methods on the class' do
       ConfiguredClass.class_eval do

@@ -15,6 +15,7 @@ require 'telecine/notifier'
 require 'telecine/dispatcher'
 require 'telecine/router'
 
+#TODO these should move to discovery
 require 'telecine/client'
 require 'telecine/server'
 

@@ -1,5 +1,10 @@
 module Celluloid
   module ZMQ
+    #TODO set options:
+    #linger
+    #delay_attach_on_connect
+    #router_mandatory (raises error if message not routable)
+    #maxmsgsize
     class Router
       include Celluloid::ZMQ
 

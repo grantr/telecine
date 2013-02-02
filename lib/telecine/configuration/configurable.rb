@@ -5,6 +5,8 @@ module Telecine
       base.extend ClassMethods
     end
 
+    # The class-level nature of this is not as useful anymore now that we want
+    # to support multiple contexts. Everything needs to be instance-level now.
     module ClassMethods
       def config
         @_config ||= if respond_to?(:superclass) && superclass.respond_to?(:config)
@@ -41,7 +43,12 @@ module Telecine
 
         names.each do |name|
           reader, line = "def #{name}; actor = config.get(:'#{name}'); actor.is_a?(Symbol) ? Celluloid::Actor[actor] : actor; end", __LINE__
-          writer, line = "def #{name}=(value); config.set(:'#{name}', value); end", __LINE__
+
+          if options[:link] == true
+            writer, line = "def #{name}=(value); link value if value; unlink get(:'#{name}') if get(:'#{name}'); config.set(:'#{name}', value); end", __LINE__
+          else
+            writer, line = "def #{name}=(value); config.set(:'#{name}', value); end", __LINE__
+          end
 
           singleton_class.class_eval reader, __FILE__, line
           singleton_class.class_eval writer, __FILE__, line

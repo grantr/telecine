@@ -2,6 +2,7 @@ module Telecine
   class Registry < Hash
     attr_accessor :_id
 
+    # Should wrap a hash instead of inheriting from Hash
     def initialize(*args)
       super
       @_lock = Mutex.new

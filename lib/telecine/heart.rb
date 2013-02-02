@@ -1,5 +1,7 @@
 #TODO Heart and Stethoscope should move into a separate gem, maybe telecine-disco-broadcast.
 # This is only one discovery mechanism of many.
+# extract common behavior into Introducer module (is there any?)
+# extract heartbeats into transports and nodes
 module Telecine
   class Heart
     include Celluloid

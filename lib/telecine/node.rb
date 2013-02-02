@@ -1,6 +1,10 @@
 require 'telecine/reference'
 
 module Telecine
+  # this should contain state machines for all transports
+  # transports need to be the ones that handle updating those state machines
+  # Node should be able to define which states define the global state
+  # Transports define Link classes that hold connection state
   class Node
     include Celluloid
     include Celluloid::FSM

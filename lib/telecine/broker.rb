@@ -7,14 +7,14 @@ module Telecine
   module Broker
     def self.included(base)
       base.class_eval do
-        include Celluloid
-        include Configurable
+        include Layer
 
         config_accessor :request_timeout
         self.request_timeout = 60
       end
     end
 
+    #TODO this should probably be owned by the context
     def registry
       @registry ||= Celluloid::Registry.new
     end
@@ -53,26 +53,25 @@ module Telecine
       reference if reference && reference.alive?
     end
 
-    def encoder
-      @encoder ||= BasicEncoder.new
-    end
+
+    #TODO this behavior should be implemented by a middleware. pull_up executes the middleware stack:
 
     # Receive a message from a transport and send it to a local actor.
     #TODO dispatch the other way (on the sending end) is handled by References
     # who should handle finding the mailbox? the handler or the broker?
     # probably the handler if possible
     # that allows different message types to use different mailbox finders
-    def dispatch(message)
-      mailbox = mailbox_for(message)
+    def pull_up(request)
+      mailbox = mailbox_for(request)
       return unless mailbox #TODO error handling
       
-      handler = handler_for(message.type)
+      handler = handler_for(request.type)
       return unless handler #TODO error handling
 
       # should the handler get a ref to the broker?
       reply = nil
       begin
-        request = future { handler.load(encoder.decode(message)).dispatch(mailbox) }
+        request = future { handler.load(encoder.decode(request)).dispatch(mailbox) }
         reply = request.value(request_timeout)
       rescue => e
         #TODO replace with real timeout exception when Celluloid::Future gets it
@@ -88,14 +87,17 @@ module Telecine
         #This is a bit messy. Seems like something else should be responsible for creating the reply.
         # or at least, allow the reply class or handler to be configurable.
         # same with transport.
-        reply_message = Reply.create(message)
-        reply_message.parts = reply
+        response = Reply.create(request)
+        response.parts = reply
         #TODO this should maybe be a future
-        message.transport.async.write(reply_message)
+        push_down(response)
       end
     end
 
     # This should be another actor
+    # it should be possible to define a 'catch-all' actor that receives messages
+    # without references or with invalid references. This allows bootstrapping
+    # clients without pre-shared references.
     def find(query)
       raise NotImplementedError, "find is not implemented"
     end

@@ -3,18 +3,25 @@ require 'telecine/message'
 module Telecine
   module Encoder
 
-    # if this returns a message, how can we use Message subclasses?
-    # should this take a message and return a message?
-    #
-    # Maybe the Message class or instance should be the one doing the encoding?
-    def encode(parts)
-      Message.new(parts)
+    # takes parts, returns encoded parts
+    def encode(*parts)
+      raise NotImplementedError, "encode not implemented"
     end
-    # take a set of parts, return a message
 
-    # take a message, return a set of parts
-    def decode(message)
-      message.parts
+    # takes encoded parts, returns decoded parts
+    def decode(*parts)
+      raise NotImplementedError, "decode not implemented"
+    end
+  end
+
+  class IdentityEncoder
+    include Encoder
+    def encode(*parts)
+      parts
+    end
+
+    def decode(*parts)
+      parts
     end
   end
 end

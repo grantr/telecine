@@ -58,10 +58,60 @@ module Telecine
       end
     end
 
+    # messages from the socket
+    # need to be parsed into Message
+    def dispatch(identity, *parts)
+      request = parser.parse(*parts)
 
-    def write(message)
-      super(message.to, *message.dump)
+      async.push_up(request)
     end
 
+    def pull_down(message)
+      write(message.from, *parser.dump(message))
+    end
+
+    def parser
+      @parser ||= Parser.new
+    end
+
+    class Parser
+      VERSION = "1"
+
+      def parse(*parts)
+        version = parts.shift
+
+        case version
+        when "1"
+          parse_v1(parts)
+        else
+          raise "Unknown message version"
+        end
+      end
+
+      def parse_v1(parts)
+        message = Message.new
+
+        message.id = parts.shift
+
+        while !parts.empty? && (header = parts.shift) != ""
+          message.headers << header
+        end
+
+        message.body = parts
+
+        message
+      end
+
+      def dump(message)
+        [
+          VERSION.to_s,
+          message.id.to_s,
+          #message.type.to_s,
+          *Array(message.headers),
+          "",
+          *Array(message.body)
+        ]
+      end
+    end
   end
 end

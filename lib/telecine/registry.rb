@@ -1,10 +1,16 @@
 module Telecine
-  class Registry < Hash
+  class Registry
+    include Enumerable
+    extend Forwardable
+
     attr_accessor :_id
 
+    #TODO these are not thread safe
+    # def_delegators :@_store, :has_key?
+
     # Should wrap a hash instead of inheriting from Hash
-    def initialize(*args)
-      super
+    def initialize(*args, &block)
+      @_store = Hash.new(*args, &block)
       @_lock = Mutex.new
       @_id = Celluloid::UUID.generate
     end
@@ -13,12 +19,12 @@ module Telecine
     def get(key, &block)
       return if key.nil?
       @_lock.synchronize do
-        if !has_key?(key.to_sym) && block_given?
+        if !@_store.has_key?(key.to_sym) && block_given?
           value = yield
           _publish(key.to_sym, :set, nil, value)
-          store(key.to_sym, value)
+          @_store.store(key.to_sym, value)
         else
-          self[key.to_sym]
+          @_store[key.to_sym]
         end
       end
     end
@@ -26,21 +32,42 @@ module Telecine
     def set(key, value)
       raise "Cannot store value with nil key" if key.nil?
       @_lock.synchronize do
-        _publish(key.to_sym, :set, self[key.to_sym], value)
-        store(key.to_sym, value)
+        _publish(key.to_sym, :set, @_store[key.to_sym], value)
+        @_store.store(key.to_sym, value)
       end
     end
 
     def remove(key)
       raise "Cannot remove nil key" if key.nil?
       @_lock.synchronize do
-        if deleted = delete(key.to_sym)
+        if deleted = @_store.delete(key.to_sym)
           _publish(key.to_sym, :remove, deleted, nil)
         end
       end
     end
 
-    private :fetch, :store, :delete, :[], :[]=
+    def size
+      @_lock.synchronize do
+        @_store.size
+      end
+    end
+
+    def each
+      @_lock.synchronize do
+        @_store.each { |key, value| yield key, value }
+      end
+    end
+
+    def merge!(other)
+      @_lock.synchronize do
+        other.each do |key, value|
+          unless @_store[key.to_sym] == value
+            _publish(key.to_sym, :set, @_store[key.to_sym], value)
+            @_store.store(key.to_sym, value)
+          end
+        end
+      end
+    end
 
     def _publish(key, action, previous, current)
       case action

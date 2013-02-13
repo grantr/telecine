@@ -34,4 +34,45 @@ module Telecine
       self.class.name
     end
   end
+
+  class LayerStack
+    attr_accessor :layers
+
+    def initialize(name, &block)
+      @layers = []
+      configure(&block) if block_given?
+    end
+
+    def configure(&block)
+      builder = Builder.new(&block)
+      @layers += builder.layers
+      connect
+    end
+
+    # doubly link the list
+    def connect
+      @layers.inject(@layers.first) do |a, b|
+        # skip the first element
+        if a === b
+          b
+        else
+          b.down = a
+          a.up = b
+        end
+      end
+      self
+    end
+
+    class Builder
+      attr_accessor :layers
+      def initialize(&block)
+        @layers = []
+        instance_eval(&block) if block_given?
+      end
+
+      def layer(klass, *args, &block)
+        @layers.push(klass.new(*args, &block))
+      end
+    end
+  end
 end

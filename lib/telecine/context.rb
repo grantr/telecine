@@ -1,5 +1,8 @@
 module Telecine
   class Context
+    #Context should:
+    #  be a supervisor group
+    #
     include Configurable
 
     attr_accessor :stacks
@@ -43,6 +46,8 @@ module Telecine
     # TODO
     # node transport mappings: zmq => ZmqTransport, ws => WSTransport, etc
     # default node stacks
+    # introducers (could just be layer stacks)
+    # listen addresses
 
     #TODO write a Buildable module that can be included in classes that include Configurable.
     # It defines a Builder subclass and a block-style configuration dsl.

@@ -36,6 +36,9 @@ module Telecine
   end
 
   class LayerStack
+    # should:
+    #   be a supervisor group
+    #   supervise layers
     attr_accessor :layers
 
     def initialize(name, &block)

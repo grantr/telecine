@@ -26,6 +26,7 @@ module Telecine
     end
 
     def run_callbacks(name, *args)
+      #TODO catch/throw
       modified = callbacks_for(:before, name).inject(args) do |memo, cb|
         [cb.call(*memo)]
       end

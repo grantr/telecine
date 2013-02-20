@@ -8,6 +8,7 @@ module Telecine
     # The class-level nature of this is not as useful anymore now that we want
     # to support multiple contexts. Everything needs to be instance-level now.
     module ClassMethods
+      #TODO this might not be tnread safe
       def config
         @_config ||= if respond_to?(:superclass) && superclass.respond_to?(:config)
           superclass.config.inheritable_copy

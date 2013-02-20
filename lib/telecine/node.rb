@@ -1,82 +1,63 @@
+require 'telecine/layer'
 require 'telecine/reference'
 
 module Telecine
-  # this should contain state machines for all transports
-  # transports need to be the ones that handle updating those state machines
-  # Node should be able to define which states define the global state
-  # Transports define Link classes that hold connection state
+
   class Node
-    include Celluloid
-    include Celluloid::FSM
-    include Celluloid::Notifications
+    # Nodes should:
+    #   contain node configuration and state
+    #   be shareable and serializeable
+    #   contain everything a remote node needs to connect to this node
+    #   generate references to remote actors
+    #   contain layer stacks for transports and routers (basically remote contexts)
+    #   these layer stacks:
+    #     have middleware that send requests from references to the remote through transports
+    #     have middleware that route responses from the remote to references
+    #   - be serializable
+    #   - contain everything a remote node needs to connect to this node
+    #   - publish updates locally
+    #   - use CRDTs to aggregate data from multiple sources
+    #
+    #   examples of items contained:
+    #   node id
+    #   node keys
+    #   transport information:
+    #     for each transport key, including * for all transports, a hash containing:
+    #       keys
+    #       addresses
+    #       encryption protocols
+    #       compression protocols
+    #       encoding protocols
+    #   state information (up, down, etc)
+    #   application-level data
+    #
+    # Maybe Node should be this state object, and there should be a subobject (layer) for routing?
+    #
+    # REMEMBER! Node is a representation of a remote node, not the local node.
+    # The Context is the source of information about the local node.
+    #
+    # Context needs to either have its own information container, or maintain a
+    # local Node object that can produce a state. It would be nice if Node was
+    # generic enough that it could be used as a local node.
+    #
+    # Nodes should support multiple addresses, which is effectively multiple transports.
+    #
+    # address format:
+    # tcs+zmq://dfoxds7usmsxflijq2ddfgkp44pa3dehlrr6cjjty3q3gsookt7a@127.0.0.1:5900
+    # ciphersuite+transport://node_id@host:port
+    #
+    # ciphersuite, transport = uri.scheme.split("+")
+    # node_id, host, port = uri.user, uri.host, uri.port
+    #
 
     include Configurable
 
-    config_accessor :id, :check_interval
-    self.id = Celluloid::UUID.generate
-    self.check_interval = 1
+    config_accessor :id
+    config_accessor :addresses
+    self.addresses = []
 
-    def self.registry
-      @registry ||= Registry.new
-    end
-
-    #TODO add a Callbacks module that other actors can use
-    #like Registry::Callbacks
-    state :unknown, default: true
-    state :up do
-      notify_state(:up)
-    end
-    state :down do
-      notify_state(:down)
-    end
-
-    # Need an address class that is like a uri
-    attr_accessor :id, :address, :fd
-
-    def initialize(id=nil, address=nil, options = {})
-      super()
-      @id = id
-      @address = address
-      @fd = FailureDetector.new
-      attach Actor.current
-    end
-
-    def beat_heart(heartbeat=nil)
-      if heartbeat
-        # TODO heartbeat info
-        # possible heartbeat encryption
-      end
-
-      if @fd.empty?
-        @timer = every(config.check_interval) { check }
-      end
-      @fd.add(Time.now.to_i)
-    end
-
-    def check
-      if @fd.suspicious?
-        transition :down if state != :down
-      else
-        transition :up if state != :up
-      end
-    end
-
-    def notify_state(state)
-      Logger.info "#{@id} #{state}"
-      publish("telecine.node.state.#{@id}", state)
-    end
-
-    # overridden because inspect causes stack overflow
-    # TODO remove when this is fixed: https://github.com/celluloid/celluloid/issues/22
-    def inspect
-      "Node id:#{@id} address:#{@address}"
-    end
-
-    def reference_to(actor, router=:router)
-      # TODO mailbox references
-      Reference.new(id, actor, router)
+    def initialize(id=nil, options = {})
+      self.id = id || Celluloid::UUID.generate
     end
   end
 end
-
-require 'telecine/node/failure_detector'

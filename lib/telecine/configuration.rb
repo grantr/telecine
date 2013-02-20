@@ -56,10 +56,15 @@ module Telecine
 
     def _publish(key, action, previous, current)
       super
+      dead_child = false
       _children.each do |child|
-        child._publish(key, action, previous, current) if child.weakref_alive? && !child.has_key?(key)
+        if child.weakref_alive?
+          child._publish(key, action, previous, current) if !child.has_key?(key)
+        else
+          dead_child = true
+        end
       end
-      _children.reject! { |child| !child.weakref_alive? }
+      _children.reject! { |child| !child.weakref_alive? } if dead_child
     end
   end
 end

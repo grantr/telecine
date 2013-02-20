@@ -7,11 +7,26 @@ module Telecine
   Logger = Celluloid::Logger
 end
 
+module Celluloid
+  class ActorProxy
+    # to avoid circular inspect
+    def inspect
+      "#<Celluloid::Actor(#{@klass})>"
+    end
+  end
+end
+
 require 'telecine/registry'
 require 'telecine/configuration'
 
 require 'telecine/node'
-require 'telecine/notifier'
+
+require 'telecine/transport'
+require 'telecine/referenceable'
+require 'telecine/reference'
+
+
+# require 'telecine/notifier'
 # require 'telecine/broker'
 # require 'telecine/router'
 

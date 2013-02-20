@@ -5,8 +5,7 @@ module Telecine
 
     attr_accessor :_id
 
-    #TODO these are not thread safe
-    # def_delegators :@_store, :has_key?
+    def_delegators :to_hash, :has_key?, :size, :each
 
     # Should wrap a hash instead of inheriting from Hash
     def initialize(*args, &block)
@@ -46,16 +45,8 @@ module Telecine
       end
     end
 
-    def size
-      @_lock.synchronize do
-        @_store.size
-      end
-    end
-
-    def each
-      @_lock.synchronize do
-        @_store.each { |key, value| yield key, value }
-      end
+    def to_hash
+      @_lock.synchronize { @_store.dup }
     end
 
     def merge!(other)

@@ -61,12 +61,26 @@ module Telecine
     # messages from the socket
     # need to be parsed into Message
     def dispatch(identity, *parts)
-      request = parser.parse(*parts)
+      message = parser.parse(*parts)
 
-      async.push_up(request)
+      # If there is a reference waiting for this message, then signal that
+      # otherwise send it up the stack
+      # TODO this should move to the node
+      if conditions[message.id]
+        conditions[message.id].signal(message)
+      else
+        async.push_up(message)
+      end
     end
 
-    def pull_down(message)
+    def conditions
+      @conditions ||= {}
+    end
+
+    def pull_down(message, condition=nil)
+      #TODO prune conditions that point to dead owners
+      #TODO conditions should probably be weakrefs
+      conditions[message.id] = condition if condition
       write(message.from, *parser.dump(message))
     end
 

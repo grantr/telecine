@@ -6,7 +6,7 @@ module Telecine
 
     attr_accessor :stack
     def stack
-      @stack ||= [Encoder.new, Dispatcher.new]
+      @stack ||= [Router.new, Dispatcher.new]
     end
 
     def pull_up(request)
@@ -15,23 +15,24 @@ module Telecine
       end
       request.dispatch
 
-      push_down(request)
+      push_down(request.response)
     end
 
     class Dispatcher
 
       def call(request)
         request.before_dispatch do
-          puts "dispatching request: #{request.inspect}"
+          puts "dispatching request: #{request.inspect} to #{request.env[:mailbox]}"
         end
       end
     end
 
-    class Encoder
+    class Router
 
       def call(request)
         request.before_dispatch do
-          request.body = request.body.collect(&:upcase)
+          puts "finding mailbox for #{request.inspect}"
+          request.env[:mailbox] = find_mailbox(request)
         end
       end
     end

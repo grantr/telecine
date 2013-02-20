@@ -9,9 +9,15 @@ module Telecine
     end
   end
 
-  class SubjectProxy
-    def class
-      "[remote]"
+  class FutureProxy < Celluloid::FutureProxy
+    def initialize(mailbox)
+      @mailbox = mailbox
+    end
+  end
+
+  class AsyncProxy < Celluloid::AsyncProxy
+    def initialize(mailbox)
+      @mailbox = mailbox
     end
   end
 
@@ -21,12 +27,13 @@ module Telecine
   #   - use its mailbox to redirect messages to the transport
   #   - disallow certain invalid methods, like remote kill, or remote
   #     thread and class handles
-  class Reference
+  class Reference < Celluloid::ActorProxy
     def initialize(mailbox)
       @mailbox = mailbox
       @thread  = ThreadHandleProxy.new
-      @subject = SubjectProxy.new
+
+      @future_proxy = FutureProxy.new(mailbox)
+      @async_proxy = AsyncProxy.new(mailbox)
     end
-    attr_reader :mailbox, :thread, :subject
   end
 end

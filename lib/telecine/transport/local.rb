@@ -7,6 +7,11 @@ module Telecine
 
     attr_accessor :channel
 
+    def initialize
+      subscribe(channel, :handle_message)
+      start
+    end
+
     def channel
       @channel ||= "telecine.transport.local.#{Celluloid::UUID.generate}"
     end
@@ -16,8 +21,13 @@ module Telecine
       channel
     end
 
+    def handle_message(topic, message)
+      dispatch(message)
+    end
+
     def write(message)
-      publish(address, message)
+      puts "publishing #{message} to #{message.destination.node_id}"
+      publish(message.destination.node_id, message)
     end
   end
 end

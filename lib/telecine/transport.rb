@@ -1,6 +1,7 @@
 require 'telecine/message'
 require 'telecine/resolver'
-require 'telecine/mailbox_proxy'
+require 'telecine/remote_mailbox'
+require 'telecine/mailbox_router'
 require 'telecine/middleware'
 require 'telecine/negotiator'
 
@@ -34,23 +35,20 @@ module Telecine
     attr_accessor :resolver
     attr_accessor :address
 
-    def initialize
-      start
-    end
-
     def start
       async.run
     end
 
     def stop
-      #TODO send a stop message to mailbox
+      #TODO send stop message
     end
 
     def run
+      puts "running"
       loop do
         message = receive { |msg| msg.is_a?(Message) }
 
-        puts "received message: #{message.inspect}"
+        puts "#{address} received message: #{message.inspect}"
 
         message.sender = address
         write(message)
@@ -99,7 +97,7 @@ module Telecine
 
     def resolve_mailbox(message)
       mailbox = resolver.resolve(message)
-      incoming_mailbox_for(message.destination, mailbox)
+      router_for(mailbox)
     end
 
     def start_negotiator(message)
@@ -109,16 +107,14 @@ module Telecine
       dispatch(message)
     end
 
-    # incoming mailbox should be a router object
-    def incoming_mailbox_for(address, mailbox)
-      MailboxProxy.new(address, mailbox).tap do |proxy|
+    def router_for(mailbox)
+      MailboxRouter.new(mailbox).tap do |proxy|
         proxy.stack = []
       end
     end
 
-    # outgoing mailbox should be a MailboxProxy
-    def outgoing_mailbox_for(address, mailbox)
-      MailboxProxy.new(address, mailbox).tap do |proxy|
+    def remote_mailbox_for(address)
+      RemoteMailbox.new(address, Celluloid::Actor.current.mailbox).tap do |proxy|
         proxy.stack = []
       end
     end

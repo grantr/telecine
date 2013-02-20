@@ -14,7 +14,7 @@ module Telecine
     include Resolver
 
     def resolve(message)
-      address = message.destination
+      address = message.destination.mailbox_id
 
       actor = Celluloid::Actor.all.detect { |a| a.mailbox.address == address }
       actor.mailbox

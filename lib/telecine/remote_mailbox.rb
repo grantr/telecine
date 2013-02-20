@@ -1,9 +1,10 @@
+require 'telecine/message'
+
 module Telecine
-  # The MailboxProxy should:
-  #   - proxy messages to another mailbox
-  #   - have a middleware stack that translates incoming messages
-  #     and optionally rejects them
-  #   - have a unique address
+  # The RemoteMailbox should:
+  #   - proxy messages sent to the remote mailbox to another, intermediate mailbox (like a transport)
+  #   - store the address of the remote mailbox
+  #   - have a middleware stack that packages payloads into messages
   #   - be serializable and transportable to remote nodes
   #   - be routable through multiple nodes
   #
@@ -83,7 +84,7 @@ module Telecine
   #       Reference.
   #
   #
-  class MailboxProxy
+  class RemoteMailbox
     attr_accessor :stack
     attr_accessor :mailbox, :address
 
@@ -93,10 +94,10 @@ module Telecine
     end
 
     def <<(message)
-      puts "got a message: #{message}"
       transport_message = Message.new
       transport_message.destination = @address
       transport_message.payload = message
+      puts "forwarding outgoing message #{transport_message.inspect} to #{@mailbox.inspect}"
       @mailbox << transport_message
     end
   end

@@ -10,7 +10,6 @@ module Telecine
 
     def self.parse(string)
       new URI.parse(string)
-
     end
 
     def initialize(uri)
@@ -32,22 +31,16 @@ module Telecine
 
   class MailboxAddress
 
-    attr_accessor :uri
+    attr_accessor :node_id, :mailbox_id
 
     def self.parse(string)
-      new URI.parse(string)
+      uri = URI.parse(string)
+      new(uri.user, uri.host)
     end
 
-    def initialize(uri)
-      @uri = uri
-    end
-
-    def node_id
-      @uri.host
-    end
-
-    def mailbox_id
-      @uri.user
+    def initialize(mailbox_id, node_id)
+      @mailbox_id = mailbox_id
+      @node_id = node_id
     end
   end
 end

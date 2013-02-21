@@ -17,30 +17,33 @@ module Telecine
     # can pass a block to automically set the key if unset
     def get(key, &block)
       return if key.nil?
+      key = key.to_s
       @_lock.synchronize do
-        if !@_store.has_key?(key.to_sym) && block_given?
+        if !@_store.has_key?(key) && block_given?
           value = yield
-          _publish(key.to_sym, :set, nil, value)
-          @_store.store(key.to_sym, value)
+          _publish(key, :set, nil, value)
+          @_store.store(key, value)
         else
-          @_store[key.to_sym]
+          @_store[key]
         end
       end
     end
 
     def set(key, value)
       raise "Cannot store value with nil key" if key.nil?
+      key = key.to_s
       @_lock.synchronize do
-        _publish(key.to_sym, :set, @_store[key.to_sym], value)
-        @_store.store(key.to_sym, value)
+        _publish(key, :set, @_store[key], value)
+        @_store.store(key, value)
       end
     end
 
     def remove(key)
       raise "Cannot remove nil key" if key.nil?
+      key = key.to_s
       @_lock.synchronize do
-        if deleted = @_store.delete(key.to_sym)
-          _publish(key.to_sym, :remove, deleted, nil)
+        if deleted = @_store.delete(key)
+          _publish(key, :remove, deleted, nil)
         end
       end
     end
@@ -52,9 +55,10 @@ module Telecine
     def merge!(other)
       @_lock.synchronize do
         other.each do |key, value|
-          unless @_store[key.to_sym] == value
-            _publish(key.to_sym, :set, @_store[key.to_sym], value)
-            @_store.store(key.to_sym, value)
+          key = key.to_s
+          unless @_store[key] == value
+            _publish(key, :set, @_store[key], value)
+            @_store.store(key, value)
           end
         end
       end

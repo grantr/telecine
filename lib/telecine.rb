@@ -18,6 +18,7 @@ end
 
 require 'telecine/registry'
 require 'telecine/configuration'
+require 'telecine/serializer'
 
 require 'telecine/node'
 

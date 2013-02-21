@@ -1,3 +1,5 @@
+require 'json'
+
 module Telecine
   module Serializable
     def self.included(base)
@@ -27,13 +29,13 @@ module Telecine
 
     attr_accessor :backend, :options
 
-    # default backend is Marshal
-    # NOTE this is probably not secure
-    # other backend options include JSON, MultiJson, and MessagePack
+    # default backend is JSON
+    # other backend options include MultiJson, MessagePack, or Marshal
+    # using Marshal can get you free instantiation but is not secure
     def initialize(*args)
       @options = args.last.is_a?(Hash) ? args.pop : {}
       backend = args.first
-      @backend = self.class.backends[backend] || backend || Marshal
+      @backend = self.class.backends[backend] || backend || JSON
     end
 
     def load(bytes)

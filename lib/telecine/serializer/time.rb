@@ -1,4 +1,4 @@
-class Time
+Time.class_eval do
   include Telecine::Serializable
 
   def as_primitive(options={})

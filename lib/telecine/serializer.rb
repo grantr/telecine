@@ -1,6 +1,11 @@
 require 'json'
 
 module Telecine
+  # Include Telecine::Serializable module in classes that need custom
+  # serialization. The class will be serialized with a type annotation
+  # so that it can be unserialized correctly on the other end.
+  #
+  # The class should implement from_primitive and as_primitive.
   module Serializable
     def self.included(base)
       base.extend(ClassMethods)
@@ -8,11 +13,21 @@ module Telecine
     end
 
     module ClassMethods
+      # This should be implemented by the including class. It takes a primitive
+      # value (hash, array, string, etc) and returns an unserialized object.
+      #
+      # The default implementation returns the primitive given.
       def from_primitive(primitive, options={})
         primitive
       end
     end
 
+    # This should be implemented by the including class. It returns a primitive
+    # value (hash, array, string, etc) representing self. Type annotation is added
+    # by the serializer, so this method does not need to annotate its own class
+    # unless it has special needs.
+    #
+    # The default implementation returns self.
     def as_primitive(options={})
       self
     end

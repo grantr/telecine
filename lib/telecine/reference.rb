@@ -12,12 +12,14 @@ module Telecine
   class FutureProxy < Celluloid::FutureProxy
     def initialize(mailbox)
       @mailbox = mailbox
+      @klass = "[remote]"
     end
   end
 
   class AsyncProxy < Celluloid::AsyncProxy
     def initialize(mailbox)
       @mailbox = mailbox
+      @klass = "[remote]"
     end
   end
 
@@ -27,10 +29,13 @@ module Telecine
   #   - use its mailbox to redirect messages to the transport
   #   - disallow certain invalid methods, like remote kill, or remote
   #     thread and class handles
+  #
+  # When creating sync calls, the caller attribute should be a serializable mailbox or mailbox proxy
   class Reference < Celluloid::ActorProxy
     def initialize(mailbox)
       @mailbox = mailbox
       @thread  = ThreadHandleProxy.new
+      @klass   = "[remote]"
 
       @future_proxy = FutureProxy.new(mailbox)
       @async_proxy = AsyncProxy.new(mailbox)

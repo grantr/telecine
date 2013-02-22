@@ -4,10 +4,13 @@ class Kryo
 
   attr_accessor :serializers, :id_to_class, :class_to_id
 
-  def initialize
+  attr_accessor :backend
+
+  def initialize(backend = JSON)
     @serializers = {}
     @id_to_class = {}
     @class_to_id = {}
+    @backend = backend
   end
 
   def register(klass, serializer, id=nil)
@@ -19,11 +22,11 @@ class Kryo
   def dump(object, io=nil)
     can = Can.new(self)
     can.add(object)
-    JSON.dump(can.dump)
+    backend.dump(can.dump)
   end
 
   def load(string)
-    segments = JSON.parse(string)
+    segments = backend.load(string)
     can = Can.new(self, segments)
     can.load
   end
@@ -41,7 +44,7 @@ class Can
 
   def add(object)
     if serializer = @kryo.serializers[object.class]
-      segment = Hash.new { |h, k| h[k] = {} }
+      segment = Hash.new { |h, k| h[k] = {} } # gotta dump the procs
       class_id = @kryo.class_to_id[object.class]
       id = @ids[class_id] += 1
       segment[class_id][id] = serializer.dump(self, object)

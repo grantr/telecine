@@ -4,13 +4,10 @@ class Kryo
 
   attr_accessor :serializers, :id_to_class, :class_to_id
 
-  attr_accessor :backend
-
-  def initialize(backend = JSON)
+  def initialize
     @serializers = {}
     @id_to_class = {}
     @class_to_id = {}
-    @backend = backend
   end
 
   def register(klass, serializer, id=nil)
@@ -22,11 +19,10 @@ class Kryo
   def dump(object, io=nil)
     can = Can.new(self)
     can.add(object)
-    backend.dump(can.dump)
+    can
   end
 
-  def load(string)
-    segments = backend.load(string)
+  def load(segments)
     can = Can.new(self, segments)
     can.load
   end

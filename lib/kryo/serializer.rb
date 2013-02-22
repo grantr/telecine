@@ -32,13 +32,22 @@ end
 class SyncCallSerializer
 
   def dump(can, call)
-    id = can.add call.caller
-    [id, call.method.to_s, call.arguments]
+    mailbox_id = can.add call.caller
+    # This should be something like "i wish to serialize this object or objects"
+    # the can returns either the object or (if there is a serializer registered) an id
+    # but then how does it know its an id? and how does the deserializer know?
+    # arg_ids = can.add call.arguments
+    # [mailbox_id, call.method.to_s, arg_ids]
+    [mailbox_id, call.method.to_s, call.arguments]
   end
 
   def load(can, object)
-    mailbox_id, method, arguments = object
-    caller = can.find(*mailbox_id)
-    Celluloid::SyncCall.new(caller, method, arguments)
+    # mailbox_id, method, arg_ids = object
+    mailbox_id, method, args = object
+    puts "looking for mailbox #{mailbox_id.inspect}"
+    mailbox = can.find(mailbox_id)
+    puts "found mailbox #{mailbox}"
+    # args = arg_ids.collect { |id| can.find(*id) }
+    Celluloid::SyncCall.new(mailbox, method, args)
   end
 end

@@ -16,7 +16,20 @@ class Kryo
     @class_to_id[klass] = id || klass.name
   end
 
-  def dump(object, io=nil)
+  # could maybe have a default serializer
+  def serializer_for(class_or_id)
+    if class_or_id.is_a?(Class)
+      @serializers[class_or_id]
+    else
+      @serializers[@id_to_class[class_or_id]]
+    end
+  end
+
+  def id_for(klass)
+    @class_to_id[klass]
+  end
+
+  def dump(object)
     can = Can.new(self)
     can.add(object)
     can
@@ -35,19 +48,27 @@ class Can
   def initialize(kryo, segments=[])
     @kryo = kryo
     @segments = segments
-    @ids = Hash.new { |h, k| h[k] = 0 }
+    @counter = 0
   end
 
-  def add(object)
-    if serializer = @kryo.serializers[object.class]
-      segment = Hash.new { |h, k| h[k] = {} } # gotta dump the procs
-      class_id = @kryo.class_to_id[object.class]
-      id = @ids[class_id] += 1
-      segment[class_id][id] = serializer.dump(self, object)
-      @segments << segment
+  def add(*objects)
+    #segment = Segment.new
+    segment = Hash.new { |h, k| h[k] = {} } # gotta dump the procs
 
-      [class_id, id]
-    end
+    object = objects.first
+    # objects.collect do |object|
+      if serializer = @kryo.serializer_for(object.class)
+        id = (@counter += 1)
+        class_id = @kryo.id_for(object.class)
+        segment[class_id][id] = serializer.dump(self, object)
+        # segment.add(id, serializer.dump(self, object))
+
+        @segments << segment
+        id
+      else
+        #TODO what if there is no serializer? maybe a default
+      end
+    # end
   end
 
   def dump
@@ -55,14 +76,16 @@ class Can
   end
 
   def load
-    @objects = Hash.new { |h, k| h[k] = {} }
+    @objects = {}
     segments = @segments.dup
     # final_segment = segments.pop
+    #
+    # this should be in the segment class
     segments.each do |segment|
       segment.each do |class_id, objects|
-        serializer = @kryo.serializers[@kryo.id_to_class[class_id]]
+        serializer = @kryo.serializer_for(class_id)
         objects.each do |object_id, object|
-          @objects[class_id][object_id] = serializer.load(self, object)
+          @objects[object_id.to_s] = serializer.load(self, object) #TODO should to_s be needed here?
         end
       end
     end
@@ -71,7 +94,7 @@ class Can
     @objects
   end
 
-  def find(class_id, object_id)
-    @objects[class_id.to_s][object_id.to_s]
+  def find(id)
+    @objects[id.to_s] #TODO should to_s be needed here?
   end
 end

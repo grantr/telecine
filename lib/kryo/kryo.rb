@@ -43,27 +43,20 @@ end
 
 class Can
   attr_accessor :kryo
-  attr_accessor :segments
 
-  def initialize(kryo, segments=[])
+  def initialize(kryo, objects={})
     @kryo = kryo
-    @segments = segments
+    @objects = objects
     @counter = 0
   end
 
   def add(*objects)
-    #segment = Segment.new
-    segment = Hash.new { |h, k| h[k] = {} } # gotta dump the procs
-
     object = objects.first
     # objects.collect do |object|
       if serializer = @kryo.serializer_for(object.class)
         id = (@counter += 1)
         class_id = @kryo.id_for(object.class)
-        segment[class_id][id] = serializer.dump(self, object)
-        # segment.add(id, serializer.dump(self, object))
-
-        @segments << segment
+        @objects[id] = { class_id => serializer.dump(self, object) }
         id
       else
         #TODO what if there is no serializer? maybe a default
@@ -72,26 +65,16 @@ class Can
   end
 
   def dump
-    segments
+    @objects
   end
 
   def load
-    @objects = {}
-    segments = @segments.dup
-    # final_segment = segments.pop
-    #
-    # this should be in the segment class
-    segments.each do |segment|
-      segment.each do |class_id, objects|
-        serializer = @kryo.serializer_for(class_id)
-        objects.each do |object_id, object|
-          @objects[object_id.to_s] = serializer.load(self, object) #TODO should to_s be needed here?
-        end
-      end
-    end
+    objects = @objects.dup
+    objects.inject do |accum, (object_id, thing)|
+      class_id, object = thing.first
 
-    # final_segment
-    @objects
+      @objects[object_id.to_s] = @kryo.serializer_for(class_id).load(self, object) #TODO should to_s be needed here?
+    end
   end
 
   def find(id)

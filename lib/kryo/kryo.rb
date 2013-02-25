@@ -1,4 +1,3 @@
-require 'json'
 class Kryo
   # This class is the container for serializers and state.
 

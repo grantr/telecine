@@ -86,19 +86,19 @@ module Telecine
   #
   class RemoteMailbox
     attr_accessor :stack
-    attr_accessor :mailbox, :address
+    attr_accessor :forwarder, :address
 
-    def initialize(address, mailbox)
+    def initialize(address, forwarder)
       @address = address
-      @mailbox = mailbox
+      @forwarder = forwarder
     end
 
     def <<(message)
       transport_message = Envelope.new
       transport_message.destination = @address
       transport_message.payload = message
-      puts "forwarding outgoing message #{transport_message.inspect} to #{@mailbox.inspect}"
-      @mailbox << transport_message
+      puts "forwarding outgoing message #{transport_message.inspect} to #{@forwarder.inspect}"
+      @forwarder << transport_message
     end
   end
 end

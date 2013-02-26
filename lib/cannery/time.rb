@@ -6,7 +6,7 @@ class TimeSerializer
   end
 
   def dump(can, time)
-    time.xmlschema(precision)
+    time.xmlschema(@precision)
   end
 
   def load(can, string)

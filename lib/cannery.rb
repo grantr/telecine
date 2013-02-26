@@ -14,6 +14,17 @@ class Cannery
     @class_to_id[klass] = id || klass.name
   end
 
+  def can(object)
+    can = Can.new(self)
+    can.add(object)
+    can
+  end
+
+  def uncan(primitive)
+    can = Can.new(self, primitive)
+    can.load
+  end
+
   # could maybe have a default serializer
   def serializer_for(class_or_id)
     if class_or_id.is_a?(Class)
@@ -27,22 +38,13 @@ class Cannery
     @class_to_id[klass]
   end
 
-  def can(object)
-    can = Can.new(self)
-    can.add(object)
-    can
-  end
-
-  def uncan(primitive)
-    can = Can.new(self, primitive)
-    can.load
-  end
-
   def initialize_copy(other)
     @serializers = @serializers.dup
     @id_to_class = @id_to_class.dup
     @class_to_id = @class_to_id.dup
   end
+
+  class UnserializableObject < StandardError; end
 
   class Can
     attr_accessor :cannery
@@ -60,6 +62,8 @@ class Cannery
       if serializer = @cannery.serializer_for(class_id)
         @primitive[id] = { class_id => serializer.dump(self, object) }
         id
+      else
+        raise UnserializableObject, "#{object.class} cannot be serialized. Did you register a serializer for it?"
       end
     end
 

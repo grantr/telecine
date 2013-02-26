@@ -15,3 +15,6 @@ gem "celluloid-zmq", git: "https://github.com/grantr/celluloid-zmq"
 gem "celluloid-io", git: "https://github.com/celluloid/celluloid-io"
 
 gem 'rb-inotify'
+
+gem 'msgpack'
+gem 'multi_json'

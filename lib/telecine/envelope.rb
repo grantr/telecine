@@ -11,7 +11,7 @@ module Telecine
   # mailbox proxy:
   #   - a payload and a sender mailbox
 
-  class Message
+  class Envelope
     attr_accessor :id, :headers, :payload, :body
 
     attr_accessor :sender, :destination

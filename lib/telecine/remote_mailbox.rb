@@ -1,4 +1,4 @@
-require 'telecine/message'
+require 'telecine/envelope'
 
 module Telecine
   # The RemoteMailbox should:
@@ -94,7 +94,7 @@ module Telecine
     end
 
     def <<(message)
-      transport_message = Message.new
+      transport_message = Envelope.new
       transport_message.destination = @address
       transport_message.payload = message
       puts "forwarding outgoing message #{transport_message.inspect} to #{@mailbox.inspect}"

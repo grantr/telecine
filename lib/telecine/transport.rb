@@ -1,4 +1,4 @@
-require 'telecine/message'
+require 'telecine/envelope'
 require 'telecine/resolver'
 require 'telecine/remote_mailbox'
 require 'telecine/mailbox_router'
@@ -46,12 +46,14 @@ module Telecine
     def run
       puts "running"
       loop do
-        message = receive { |msg| msg.is_a?(Message) }
+        envelope = receive { |msg| msg.is_a?(Envelope) }
 
-        puts "#{address} received message: #{message.inspect}"
+        puts "#{address} received message: #{envelope.inspect}"
 
-        message.sender = address
-        write(message)
+        # This shouldn't be necessary - the Envelope should already have a sender.
+        # That allows relays to send envelopes with senders that are not this node.
+        envelope.sender = address
+        write(envelope)
       end
     end
 

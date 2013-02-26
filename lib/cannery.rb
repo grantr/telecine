@@ -38,6 +38,12 @@ class Cannery
     can.load
   end
 
+  def initialize_copy(other)
+    @serializers = @serializers.dup
+    @id_to_class = @id_to_class.dup
+    @class_to_id = @class_to_id.dup
+  end
+
   class Can
     attr_accessor :cannery
 

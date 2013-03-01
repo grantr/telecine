@@ -65,32 +65,17 @@ module Telecine
       @connections ||= {}
     end
 
-    def dispatch(message)
-      dispatch_to_mailbox(message) || start_negotiator(message)
-    end
+    def dispatch(envelope)
+      puts "Transport dispatching #{envelope.inspect}"
+      
+      # This should probably be a factory
+      connections[envelope.sender] ||= Connection.new(envelope.sender, Celluloid::Actor.current)
 
-    def dispatch_to_mailbox(message)
-      puts "dispatching"
-      # if mailbox registry has a mailbox for the address, send to it
-      if mailboxes[message.destination]
-        puts "mailbox found: #{mailboxes[message.destination]}"
-        mailbox = mailboxes[message.destination]
-      # if connection registry has a middleware stack for the sender, try to resolve the mailbox
-      elsif connections[message.sender].is_a?(MiddlewareStack)
-        puts "middleware stack found: #{connections[message.sender]}"
-        mailboxes[message.destination] = resolve_mailbox(message) #TODO handle errors
-        puts "resolved mailbox: #{mailboxes[message.destination]}"
-        mailbox = mailboxes[message.destination]
-      # if a negotiator exists for this node, send to that
-      elsif connections[message.sender].is_a?(Negotiator)
-        puts "negotiator found: #{connections[message.sender]}"
-        mailbox = connections[message.sender].mailbox
-      end
+      connection = connections[envelope.sender]
+      
+      mailbox = resolver.resolve(envelope)
 
-      if mailbox
-        mailbox << message
-        true
-      end
+      connection.dispatch(envelope, mailbox)
     end
 
     def resolver

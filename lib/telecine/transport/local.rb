@@ -8,7 +8,7 @@ module Telecine
     attr_accessor :channel
 
     def initialize
-      subscribe(channel, :handle_message)
+      subscribe(/.*@#{channel}$/, :handle_message)
       start
     end
 
@@ -25,9 +25,9 @@ module Telecine
       dispatch(message)
     end
 
-    def write(message)
-      puts "publishing #{message} to #{message.destination.node_id}"
-      publish(message.destination.node_id, message)
+    def write(envelope)
+      puts "publishing #{envelope.inspect} to #{envelope.destination}"
+      publish(envelope.destination, envelope)
     end
   end
 end

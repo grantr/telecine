@@ -44,21 +44,16 @@ module Telecine
     end
 
     def run
-      puts "running"
       loop do
         envelope = receive { |msg| msg.is_a?(Envelope) }
 
-        puts "#{address} received message: #{envelope.inspect}"
+        puts "Transport #{address} received envelope: #{envelope.inspect}"
 
         # This shouldn't be necessary - the Envelope should already have a sender.
         # That allows relays to send envelopes with senders that are not this node.
         envelope.sender = address
         write(envelope)
       end
-    end
-
-    def mailboxes
-      @mailboxes ||= {}
     end
 
     def connections

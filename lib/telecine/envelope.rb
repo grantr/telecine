@@ -12,21 +12,11 @@ module Telecine
   #   - a payload and a sender mailbox
 
   class Envelope
-    attr_accessor :id, :headers, :payload, :body
-
+    attr_accessor :id, :contents
     attr_accessor :sender, :destination
-    attr_accessor :env
-
-    def headers
-      @headers = []
-    end
 
     def id
       @id ||= Celluloid::UUID.generate
-    end
-
-    def env
-      @env ||= {}
     end
   end
 end

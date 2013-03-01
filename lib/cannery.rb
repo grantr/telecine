@@ -73,6 +73,13 @@ class Cannery
     @class_to_id[klass]
   end
 
+  # Retrieve the class for a given class id.
+  #
+  # Returns the class or nil if no class was found.
+  def class_for(id)
+    @id_to_class[id]
+  end
+
   # Dup the serializer and class id hashes on copy so that the copied object
   # will get its own hashes.
   def initialize_copy(other)

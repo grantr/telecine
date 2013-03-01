@@ -1,3 +1,5 @@
+require 'cannery/identity'
+
 class Cannery
   # This class is the container for serializers. It stores the mapping between
   # classes and serializers, and classes and ids.

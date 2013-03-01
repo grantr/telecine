@@ -16,9 +16,10 @@ module Celluloid
   end
 end
 
+require 'cannery'
+
 require 'telecine/registry'
 require 'telecine/configuration'
-require 'telecine/serializer'
 
 require 'telecine/node'
 
